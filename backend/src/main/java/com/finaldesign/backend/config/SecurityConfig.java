@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("teacherDetailsServiceImpl")
     private UserDetailsService teacherDetailsService;
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -65,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(studentAuthenticationProvider())
                 .authenticationProvider(teacherAuthenticationProvider());
     }
-
 
     @Bean
     @Override

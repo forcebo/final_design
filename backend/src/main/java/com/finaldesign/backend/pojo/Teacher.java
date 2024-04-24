@@ -1,7 +1,6 @@
 package com.finaldesign.backend.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -26,11 +25,11 @@ public class Teacher {
     private String phone;
     private String address;
     private String role;
-    @TableField("is_agree")
-    private Integer is_agree;
     private String photo;
+    private String description;
+    private String city;
 
-    public Teacher(Integer id, String username, String password, String identity, String realname, String sex, Integer age, String education, String major, String phone, String address, Integer is_agree, String photo) {
+    public Teacher(Integer id, String username, String password, String identity, String realname, String sex, Integer age, String education, String major, String phone, String address, String photo, String city) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -42,8 +41,8 @@ public class Teacher {
         this.major = major;
         this.phone = phone;
         this.address = address;
-        this.is_agree = is_agree;
         this.role = "TEACHER";
         this.photo = photo;
+        this.city = city;
     }
 }

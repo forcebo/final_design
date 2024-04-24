@@ -80,6 +80,8 @@ public class TeacherServiceImpl implements UserService {
         String phone = map.get("phone");
         String address = map.get("address");
         String is_agree = map.get("is_agree");
+        String city = map.get("city");
+        city = "西安";
 
         if (StrUtil.isBlank(username)) {
             return Result.fail("用户名不能为空");
@@ -142,11 +144,26 @@ public class TeacherServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(password);
         String photo = "https://cdn.acwing.com/media/user/profile/photo/160348_lg_916a3c928b.jpg";
         Teacher teacher = new Teacher(null, username, encodedPassword, identity, realname, sex, Integer.parseInt(age), education, major,
-                phone, address, Integer.parseInt(is_agree), photo);
+                phone, address, photo, city);
 
         teacherMapper.insert(teacher);
 
         return Result.ok(teacher);
+    }
+
+    @Override
+    public Result updateInfo(Map<String, String> map) {
+        return null;
+    }
+
+    @Override
+    public Result updatePassword(String password, String changePassword, String changeConfirmPassword) {
+        return null;
+    }
+
+    @Override
+    public Result updatePhoto(String photo) {
+        return null;
     }
 
     public boolean isValidOptions(String option, String[] validOptions) {

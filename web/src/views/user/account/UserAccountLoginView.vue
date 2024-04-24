@@ -266,7 +266,7 @@ export default {
     const teacherLogin = () => {
       error_message.value = "";
       store.dispatch("teacherLogin", {
-        username: studentUsername.value,
+        username: teacherUsername.value,
         password: teacherPassword.value,
         success(resp) {
           if (resp.success == false) {

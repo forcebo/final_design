@@ -114,13 +114,19 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              {{ $store.state.student.username }}
+            <img
+            class="rounded-circle"
+                  :src="$store.state.student.photo"
+                  alt=""
+                  style="width: 30px; height: 30px;"
+                />
+              <!-- {{ $store.state.student.username }} -->
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <li>
                 <router-link
                   class="dropdown-item"
-                  :to="{ name: 'user_info_index' }"
+                  :to="{ name: 'student_info_index' }"
                   >个人信息</router-link
                 >
               </li>

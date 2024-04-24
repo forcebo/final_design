@@ -5,6 +5,7 @@ import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.service.user.account.UserServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,5 +34,24 @@ public class StudentController {
     @PostMapping("/student/account/register/")
     public Result register(@RequestParam Map<String, String> map) {
         return UserServiceFactory.getUserService("STUDENT").register(map);
+    }
+
+    @PostMapping("/student/account/info/update/")
+    public Result updateInfo(@RequestParam Map<String, String> map) {
+        return UserServiceFactory.getUserService("STUDENT").updateInfo(map);
+    }
+
+    @PostMapping("/student/account/password/update/")
+    public Result updatePassword(@RequestParam Map<String, String> map) {
+        String oldPassword = map.get("oldPassword");
+        String newPassword = map.get("newPassword");
+        String confirmNewPassword = map.get("confirmNewPassword");
+        return UserServiceFactory.getUserService("STUDENT").updatePassword(oldPassword, newPassword, confirmNewPassword);
+    }
+
+    @PostMapping("/student/account/photo/update/")
+    public Result updatePhoto(@RequestParam Map<String, String> map) {
+        String photo = map.get("photo");
+        return UserServiceFactory.getUserService("STUDENT").updatePhoto(photo);
     }
 }

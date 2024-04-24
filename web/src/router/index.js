@@ -5,12 +5,14 @@ import ReserveView from '@/views/ReserveView'
 import CourseListenView from '@/views/CourseListenView'
 import ReleaseRequirementView from '@/views/ReleaseRequirementView'
 import NotFoundView from '@/views/NotFoundView'
-import UserInfoView from '@/views/UserInfoView'
+import StudentInfoView from '@/views/student/StudentInfoView'
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView'
 import UserAccountRegisterMidiumView from '@/views/user/account/UserAccountRegisterMidiumView'
 import store from '@/store/index'
 import StudentAccountRegisterView from '@/views/user/account/student/StudentAccountRegisterView'
 import TeacherAccountRegisterView from '@/views/user/account/teacher/TeacherAccountRegisterView'
+import StudentInfoUpdateView from '@/views/student/StudentInfoUpdateView'
+import StudentPasswordUpdateView from '@/views/student/StudentPasswordUpdateView'
 
 const routes = [
   {
@@ -62,9 +64,25 @@ const routes = [
     }
   },
   {
-    path: "/user/info/",
-    name: "user_info_index",
-    component: UserInfoView,
+    path: "/student/info/",
+    name: "student_info_index",
+    component: StudentInfoView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/student/info/update/",
+    name: "studnet_info_update_index",
+    component: StudentInfoUpdateView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/student/info/password/update",
+    name: "studnet_password_update_index",
+    component: StudentPasswordUpdateView,
     meta: {
       requestAuth: true,
     }

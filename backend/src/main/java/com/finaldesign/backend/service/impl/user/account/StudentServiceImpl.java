@@ -45,6 +45,7 @@ public class StudentServiceImpl implements UserService {
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+
         Student student  = loginUser.getStudent();
 
         return Result.ok(student);
@@ -97,14 +98,8 @@ public class StudentServiceImpl implements UserService {
         if (StrUtil.isBlank(sex)) {
             return Result.fail("性别不能为空");
         }
-        if (StrUtil.isBlank(phone)) {
-            return Result.fail("电话号码不能为空");
-        }
-        if (phone.length() != 11) {
-            return Result.fail("电话号码长度不是11位");
-        }
-        if (!isNumeric(phone)) {
-            return Result.fail("电话号码不全为数字");
+        if (!Validator.isMobile(phone)) {
+            return Result.fail("请输入正确的手机号");
         }
         if (StrUtil.isBlank(address)) {
             return Result.fail("通讯地址不能为空");
@@ -141,7 +136,94 @@ public class StudentServiceImpl implements UserService {
         return Result.ok(user);
     }
 
-    public boolean isNumeric(String str) {
-        return str.matches("-?\\d+(\\.\\d+)?");  // 匹配整数或浮点数形式
+    @Override
+    public Result updateInfo(Map<String, String> map) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+
+        String username = map.get("username");
+        String realname = map.get("realname");
+        String phone = map.get("phone");
+        String address = map.get("address");
+        if (StrUtil.isBlank(username)) {
+            return Result.fail("用户名不能为空");
+        }
+        if(StrUtil.isBlank(realname)) {
+            return Result.fail("请填入真实姓名");
+        }
+        if (!Validator.isMobile(phone)) {
+            return Result.fail("请输入正确的手机号");
+        }
+        if (StrUtil.isBlank(address)) {
+            return Result.fail("通讯地址不能为空");
+        }
+
+        if (!username.equals(student.getUsername())) {
+            QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("username", username);
+            List<Student> users = studentMapper.selectList(queryWrapper);
+            if (!users.isEmpty()) {
+                return Result.fail("用户名已经存在");
+            }
+        }
+        if (!phone.equals(student.getPhone())) {
+            QueryWrapper<Student> phoneQueryWrapper = new QueryWrapper<>();
+            phoneQueryWrapper.eq("phone", phone);
+            List<Student> users2 = studentMapper.selectList(phoneQueryWrapper);
+            if (!users2.isEmpty()) {
+                return Result.fail("手机号已存在");
+            }
+        }
+        Student new_student = new Student(student.getId(), username, student.getPassword(), student.getPhoto(), realname,
+                student.getSex(), phone, address);
+        studentMapper.updateById(new_student);
+
+        return Result.ok();
+    }
+
+    @Override
+    public Result updatePassword(String oldPassword, String newPassword, String confirmNewPassword) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+        if(StrUtil.isBlank(oldPassword)) {
+            return Result.fail("请输入原密码");
+        }
+        if (!passwordEncoder.matches(oldPassword, student.getPassword())) {
+            return Result.fail("用户原密码错误");
+        } else {
+            if (StrUtil.isBlank(newPassword)) {
+                return Result.fail("修改后的密码不能为空");
+            }
+            if (!newPassword.equals(confirmNewPassword)) {
+                return Result.fail("两次修改后的密码不相同");
+            }
+            Student new_Student = new Student(student.getId(), student.getUsername(),
+                    passwordEncoder.encode(newPassword), student.getPhoto(), student.getRealname(),
+                    student.getSex(), student.getPhone(), student.getAddress());
+            studentMapper.updateById(new_Student);
+
+            return Result.ok();
+        }
+    }
+
+    @Override
+    public Result updatePhoto(String photo) {
+        if (StrUtil.isBlank(photo)) {
+            return Result.fail("photo传输失败");
+        }
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+        student.setPhoto(photo);
+        studentMapper.updateById(student);
+        return Result.ok(photo);
     }
 }
