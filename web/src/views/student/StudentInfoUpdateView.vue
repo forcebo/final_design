@@ -44,6 +44,7 @@
                   id="avatar"
                   accept="image/*"
                   style="display: none"
+                  @change="handleAvatarChange"
                 />
                 <label for="avatar" class="btn btn-primary">更改头像</label>
               </div>
@@ -300,12 +301,50 @@ export default {
       });
     };
 
+    const handleAvatarChange = (event) => {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append("avatar", file);
+      console.log(formData);
+      $.ajax({
+        url: "http://127.0.0.1:3000/student/account/photo/update/", // 修改为实际的后端接口地址
+        type: "post",
+        data: formData,
+        processData: false, // 不对 data 进行序列化处理
+        contentType: false, // 不设置 content-type 头部
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        success(resp) {
+          console.log("文件上传成功:", resp);
+          if (resp.success == true) {
+            store.dispatch("getStudentInfo", {
+              success() {
+                store.commit("updateStudentPullingInfo", false);
+              },
+              error() {
+                store.commit("updateStudentPullingInfo", false);
+              },
+            });
+            showSuccess.value = true;
+          } else {
+            error_message.value = resp.errorMsg;
+          }
+
+        },
+        error(xhr, status, error) {
+          console.error("文件上传失败:", error);
+        },
+      })
+    }
+
     return {
       username,
       realname,
       phone,
       address,
       error_message,
+      handleAvatarChange,
       updateStudentInfo,
       showSuccess,
       closeModal,

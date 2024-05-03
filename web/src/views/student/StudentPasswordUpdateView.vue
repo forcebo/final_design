@@ -14,7 +14,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <p>修改信息成功！</p>
+            <p>{{ modal_error_message }}</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="closeModal">
@@ -53,6 +53,7 @@
                   id="avatar"
                   accept="image/*"
                   style="display: none"
+                  @change="handleAvatarChange"
                 />
                 <label for="avatar" class="btn btn-primary">更改头像</label>
               </div>
@@ -241,9 +242,50 @@ export default {
     let confirmNewPassword = ref("");
     let error_message = ref("");
     let showSuccess = ref(false);
+    let modal_error_message = ref("");
 
     const closeModal = () => {
       showSuccess.value = false;
+      modal_error_message.value = "修改信息成功！"
+    }
+
+    const handleAvatarChange = (event) => {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append("avatar", file);
+      console.log(formData);
+      $.ajax({
+        url: "http://127.0.0.1:3000/student/account/photo/update/", // 修改为实际的后端接口地址
+        type: "post",
+        data: formData,
+        processData: false, // 不对 data 进行序列化处理
+        contentType: false, // 不设置 content-type 头部
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        success(resp) {
+          // console.log("文件上传成功:", resp);
+          if (resp.success == true) {
+            store.dispatch("getStudentInfo", {
+              success() {
+                store.commit("updateStudentPullingInfo", false);
+              },
+              error() {
+                store.commit("updateStudentPullingInfo", false);
+              },
+            });
+            modal_error_message.value = "修改信息成功！";
+            showSuccess.value = true;
+          } else {
+            modal_error_message.value = resp.errorMsg;
+          }
+
+        },
+        error(resp) {
+          modal_error_message.value = resp.errorMsg;
+          console.error("文件上传失败:", resp);
+        },
+      })
     }
 
     const updateStudentPassword = () => {
@@ -260,7 +302,7 @@ export default {
           confirmNewPassword: confirmNewPassword.value,
         },
         success(resp) {
-          console.log(resp);
+          //console.log(resp);
           if (resp.success == true) {
             store.dispatch("getStudentInfo", {
               success() {
@@ -277,7 +319,6 @@ export default {
           } else {
             error_message.value = resp.errorMsg;
           }
-          console.log(resp);
         },
         error(resp) {
           error_message.value = "未知错误，请重试";
@@ -293,6 +334,8 @@ export default {
       updateStudentPassword,
       error_message,
       closeModal,
+      handleAvatarChange,
+      modal_error_message,
     };
   },
 };

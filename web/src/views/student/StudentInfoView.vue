@@ -1,6 +1,32 @@
 <template>
   <NavBar />
   <ContentField>
+    <div class="modal" tabindex="-1" id="exampleModal" v-if="showSuccess">
+      <div class="modal-dialog" style="width: 400px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">提示</h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closeModal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>{{ modal_error_message }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeModal">
+              关闭
+            </button>
+            <button type="button" class="btn btn-primary" @click="closeModal">
+              确定
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row justify-content-center">
       <div class="card" style="height: 700px; width: 1000px; border-radius: 0%">
         <div class="row" style="margin-top: 10px">
@@ -13,20 +39,20 @@
               <div class="card-body">
                 <div class="text-center">
                   <img
-                  :src="$store.state.student.photo"
-                  alt=""
-                  style="width: 80%"
-                />
+                    :src="$store.state.student.photo"
+                    alt=""
+                    style="width: 80%"
+                  />
                 </div>
-                
               </div>
-              <div class="text-center" style="margin-bottom: 20px;">
+              <div class="text-center" style="margin-bottom: 20px">
                 <!-- 允许用户上传新的头像 -->
                 <input
                   type="file"
                   id="avatar"
                   accept="image/*"
                   style="display: none"
+                  @change="handleAvatarChange"
                 />
                 <label for="avatar" class="btn btn-primary">更改头像</label>
               </div>
@@ -131,14 +157,87 @@
 <script>
 import NavBar from "@/components/NavBar.vue";
 import ContentField from "@/components/ContentField.vue";
+import { useStore } from "vuex";
+import { ref } from "vue";
+import $ from "jquery";
 export default {
   components: {
     ContentField,
     NavBar,
   },
+  setup() {
+    const store = useStore();
+    let modal_error_message = ref("");
+    let showSuccess = ref(false);
+
+    const closeModal = () => {
+      showSuccess.value = false;
+      modal_error_message.value = "修改信息成功！";
+    };
+
+    const handleAvatarChange = (event) => {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append("avatar", file);
+      console.log(formData);
+      $.ajax({
+        url: "http://127.0.0.1:3000/student/account/photo/update/", // 修改为实际的后端接口地址
+        type: "post",
+        data: formData,
+        processData: false, // 不对 data 进行序列化处理
+        contentType: false, // 不设置 content-type 头部
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        success(resp) {
+          // console.log("文件上传成功:", resp);
+          if (resp.success == true) {
+            store.dispatch("getStudentInfo", {
+              success() {
+                store.commit("updateStudentPullingInfo", false);
+              },
+              error() {
+                store.commit("updateStudentPullingInfo", false);
+              },
+            });
+            modal_error_message.value = "修改信息成功！";
+            showSuccess.value = true;
+          } else {
+            modal_error_message.value = resp.errorMsg;
+          }
+        },
+        error(resp) {
+          modal_error_message.value = resp.errorMsg;
+          console.error("文件上传失败:", resp);
+        },
+      });
+    };
+    return {
+      closeModal,
+      handleAvatarChange,
+      showSuccess,
+      modal_error_message,
+    };
+  },
 };
 </script>
 
 <style scoped>
+/* 模态框居中显示 */
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 为模态框添加一些样式以保持居中 */
+.modal-dialog {
+  max-width: 80%;
+}
+
+/* 遮罩层样式 */
+.modal-backdrop.show {
+  opacity: 0.5;
+}
 </style>
 

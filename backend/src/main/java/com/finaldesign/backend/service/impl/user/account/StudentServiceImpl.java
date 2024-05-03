@@ -10,6 +10,7 @@ import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.utils.JwtUtil;
+import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -214,14 +216,23 @@ public class StudentServiceImpl implements UserService {
 
     @Override
     public Result updatePhoto(String photo) {
-        if (StrUtil.isBlank(photo)) {
-            return Result.fail("photo传输失败");
-        }
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
         Student student = loginUser.getStudent();
+        String oldPhotoUrl = student.getPhoto();
+        if (!StrUtil.isBlank(oldPhotoUrl)) {
+            String path = oldPhotoUrl.replaceFirst("^https?://[^/]+", "");
+            String oldFileUrl = "D:/" + path;
+            File oldFile =  new File(oldFileUrl);
+            if (oldFile.exists()) {
+                boolean deleted = oldFile.delete();
+                if (!deleted) {
+                    System.out.println("删除之前的图片文件失败，请手动删除");
+                }
+            }
+        }
         student.setPhoto(photo);
         studentMapper.updateById(student);
         return Result.ok(photo);

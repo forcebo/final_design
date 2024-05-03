@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 学生登录路径
-                .antMatchers("/student/account/token/", "/student/account/register/").permitAll()
+                .antMatchers("/student/account/token/", "/student/account/register/", "/img/**").permitAll()
                 // 教师登录路径
                 .antMatchers("/teacher/account/token/", "/teacher/account/register/").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()

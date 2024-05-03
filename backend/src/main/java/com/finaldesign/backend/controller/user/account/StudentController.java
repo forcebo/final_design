@@ -4,14 +4,21 @@ import cn.hutool.core.util.StrUtil;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.service.user.account.UserServiceFactory;
+import com.finaldesign.backend.utils.ImgRegulation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 public class StudentController {
@@ -50,8 +57,34 @@ public class StudentController {
     }
 
     @PostMapping("/student/account/photo/update/")
-    public Result updatePhoto(@RequestParam Map<String, String> map) {
-        String photo = map.get("photo");
-        return UserServiceFactory.getUserService("STUDENT").updatePhoto(photo);
+    public Result updatePhoto(@RequestParam("avatar") MultipartFile file) throws IOException {
+        if(StrUtil.isBlank(file.toString())) return Result.fail("图片上传失败");
+        Date date = new Date();
+        String dateForm = new SimpleDateFormat("yyyy-MM").format(date);
+        String casePath = "D:\\img\\" + dateForm;
+        String imgFormat = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+
+        ImgRegulation regulation = new ImgRegulation();
+        try{
+            boolean ifimg = regulation.VERIFY(imgFormat);
+            if(!ifimg) return Result.fail("图片类型错误");
+
+        }catch (Exception e){
+            return Result.fail("请重试");
+        }
+
+        File f = new File(casePath);
+        try {
+            if (!f.exists()) {
+                f.mkdirs();
+            }
+        }catch (Exception e) {
+            return Result.fail("请重新上传");
+        }
+        String name = UUID.randomUUID().toString() + imgFormat;
+        file.transferTo(new File(casePath + "\\" + name));
+        String urlImg = "http://localhost:3000/img/" + dateForm + "/" + name;
+
+        return UserServiceFactory.getUserService("STUDENT").updatePhoto(urlImg);
     }
 }
