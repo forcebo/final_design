@@ -92,7 +92,18 @@
               >课程试听</router-link
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="$store.state.teacher.is_login">
+            <router-link
+              :class="
+                route_name == 'teacher_release_job_information_index'
+                  ? 'nav-link active'
+                  : 'nav-link'
+              "
+              :to="{ name: 'teacher_release_job_information_index' }"
+              >发布求职信息</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="$store.state.student.is_login">
             <router-link
               :class="
                 route_name == 'release_requirement_index'
@@ -135,7 +146,38 @@
             </ul>
           </li>
         </ul>
-        <ul class="navbar-nav" v-else-if="!$store.state.student.pulling_info">
+        <ul class="navbar-nav" v-else-if="$store.state.teacher.is_login">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdownMenuLink"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+            <img
+            class="rounded-circle"
+                  :src="$store.state.teacher.photo"
+                  alt=""
+                  style="width: 30px; height: 30px;"
+                />
+              <!-- {{ $store.state.student.username }} -->
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li>
+                <router-link
+                  class="dropdown-item"
+                  :to="{ name: 'teacher_info_index' }"
+                  >个人信息</router-link
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item" href="#" @click="logout">退出</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="navbar-nav" v-else-if="!$store.state.student.pulling_info | !$store.state.teacher.pulling_info">
           <li class="nav-item">
             <router-link
               class="nav-link"
@@ -175,6 +217,7 @@ export default {
 
     const logout = () => {
       store.dispatch("studentLogout");
+      store.dispatch("teacherLogout");
     }
 
     return {

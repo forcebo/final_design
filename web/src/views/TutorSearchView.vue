@@ -17,17 +17,31 @@ export default {
     const store = useStore();
     const jwt_token = localStorage.getItem("jwt_token");
     if (jwt_token) {
-      store.commit("updateStudentToken", jwt_token);
-      store.dispatch("getStudentInfo", {
-        success() {
-          store.commit("updateStudentPullingInfo", false);
-        },
-        error() {
-          store.commit("updateStudentPullingInfo", false);
-        }
-      })
+      const role = localStorage.getItem("role");
+      if ( role === "STUDENT") {
+        store.commit("updateStudentToken", jwt_token);
+        store.dispatch("getStudentInfo", {
+          success() {
+            store.commit("updateStudentPullingInfo", false);
+          },
+          error() {
+            store.commit("updateStudentPullingInfo", false);
+          }
+        })
+      } else if (role === "TEACHER"){
+        store.commit("updateTeacherToken", jwt_token);
+        store.dispatch("getTeacherInfo", {
+          success() {
+            store.commit("updateTeacherPullingInfo", false);
+          },
+          error() {
+            store.commit("updateTeacherPullingInfo", false);
+          }
+        })
+      }
     } else {
       store.commit("updateStudentPullingInfo", false);
+      store.commit("updateTeacherPullingInfo", false);
     }
   }
 };

@@ -72,6 +72,10 @@ public class RequirementServiceImpl implements RequirementService {
         UsernamePasswordAuthenticationToken authenticationToken =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+
         StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
         Student student = loginUser.getStudent();
         requirement.setStudentId(student.getId());

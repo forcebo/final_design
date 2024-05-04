@@ -13,6 +13,8 @@ import StudentAccountRegisterView from '@/views/user/account/student/StudentAcco
 import TeacherAccountRegisterView from '@/views/user/account/teacher/TeacherAccountRegisterView'
 import StudentInfoUpdateView from '@/views/student/StudentInfoUpdateView'
 import StudentPasswordUpdateView from '@/views/student/StudentPasswordUpdateView'
+import ReleaseJobInfomationView from '@/views/ReleaseJobInformationView'
+import TeacherInfoView from '@/views/teacher/TeacherInfoView'
 
 const routes = [
   {
@@ -120,6 +122,22 @@ const routes = [
     }
   },
   {
+    path: "/teacher/release/job/information/",
+    name: "teacher_release_job_information_index",
+    component: ReleaseJobInfomationView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/teacher/info/index/",
+    name: "teacher_info_index",
+    component: TeacherInfoView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
     path: "/404/",
     name: "404",
     component: NotFoundView,
@@ -140,7 +158,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requestAuth && !store.state.student.is_login) {
-    next({name: "user_account_login"});
+    if (store.state.teacher.is_login) {
+      next();
+    } else {
+      next({name: "user_account_login"});
+    }
   } else {
     next();
   }

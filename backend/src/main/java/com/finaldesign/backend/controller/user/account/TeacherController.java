@@ -31,7 +31,6 @@ public class TeacherController {
 
     @GetMapping("/teacher/account/info/")
     public Result getInfo() {
-        Teacher teacher = teacherMapper.selectById(2);
         return UserServiceFactory.getUserService("TEACHER").getInfo();
     }
 

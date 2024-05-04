@@ -105,7 +105,7 @@ export default ({
             }
         })
     },
-    logout(context) {
+    teacherLogout(context) {
         context.commit("teacherLogout");
         localStorage.removeItem("jwt_token");
         localStorage.removeItem("role");
