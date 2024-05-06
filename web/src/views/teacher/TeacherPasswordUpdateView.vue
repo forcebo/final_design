@@ -25,14 +25,14 @@
       </div>
     </div>
   </div>
-  <StudentInfoTemplate>
+  <TeacherInfoTemplate>
     <div class="d-flex justify-content-center">
       <span style="color: red; font-weight: bold">修改密码</span>
     </div>
-    <form @submit.prevent="updateStudentPassword" style="margin-top: 20px">
+    <form @submit.prevent="updateTeacherPassword" style="margin-top: 20px">
       <div class="mb-3 row align-items-center">
         <label
-          for="studentOldPassword"
+          for="teacherOldPassword"
           class="col-sm-4 col-form-label text-end"
         >
           原来的密码:
@@ -42,14 +42,14 @@
             v-model="oldPassword"
             type="password"
             class="form-control"
-            id="studentOldPassword"
+            id="teacherOldPassword"
             placeholder="请输入原来的密码"
           />
         </div>
       </div>
       <div class="mb-3 row align-items-center" style="margin-top: 10px">
         <label
-          for="studentNewPassword"
+          for="teacherNewPassword"
           class="col-sm-4 col-form-label text-end"
         >
           输入新密码:
@@ -59,14 +59,14 @@
             v-model="newPassword"
             type="password"
             class="form-control"
-            id="studentNewPassword"
+            id="teacherNewPassword"
             placeholder="请输入修改后的密码"
           />
         </div>
       </div>
       <div class="mb-3 row align-items-center" style="margin-top: 10px">
         <label
-          for="studentConfirmPassword"
+          for="teacherConfirmPassword"
           class="col-sm-4 col-form-label text-end"
         >
           确认新密码:
@@ -76,7 +76,7 @@
             v-model="confirmNewPassword"
             type="password"
             class="form-control"
-            id="studentConfirmPassword"
+            id="teacherConfirmPassword"
             placeholder="请输入确认修改后的密码"
           />
         </div>
@@ -90,18 +90,17 @@
         </button>
       </div>
     </form>
-  </StudentInfoTemplate>
-
+  </TeacherInfoTemplate>
 </template>
-  
-  <script>
-import StudentInfoTemplate from "@/components/StudentInfoTemplate.vue";
+    
+    <script>
+import TeacherInfoTemplate from "@/components/TeacherInfoTemplate.vue";
 import { useStore } from "vuex";
 import { ref } from "vue";
 import $ from "jquery";
 export default {
   components: {
-    StudentInfoTemplate,
+    TeacherInfoTemplate,
   },
 
   setup() {
@@ -118,51 +117,14 @@ export default {
       modal_error_message.value = "";
     };
 
-    const handleAvatarChange = (event) => {
-      const file = event.target.files[0];
-      const formData = new FormData();
-      formData.append("avatar", file);
-      console.log(formData);
-      $.ajax({
-        url: "http://127.0.0.1:3000/student/account/photo/update/", // 修改为实际的后端接口地址
-        type: "post",
-        data: formData,
-        processData: false, // 不对 data 进行序列化处理
-        contentType: false, // 不设置 content-type 头部
-        headers: {
-          Authorization: "Bearer " + store.state.student.token,
-        },
-        success(resp) {
-          // console.log("文件上传成功:", resp);
-          if (resp.success == true) {
-            store.dispatch("getStudentInfo", {
-              success() {
-                store.commit("updateStudentPullingInfo", false);
-              },
-              error() {
-                store.commit("updateStudentPullingInfo", false);
-              },
-            });
-            modal_error_message.value = "修改信息成功！";
-            showSuccess.value = true;
-          } else {
-            modal_error_message.value = resp.errorMsg;
-          }
-        },
-        error(resp) {
-          modal_error_message.value = resp.errorMsg;
-          console.error("文件上传失败:", resp);
-        },
-      });
-    };
-
-    const updateStudentPassword = () => {
+    const updateTeacherPassword = () => {
       error_message.value = "";
+      console.log(oldPassword.value);
       $.ajax({
-        url: "http://127.0.0.1:3000/student/account/password/update/",
+        url: "http://127.0.0.1:3000/teacher/account/password/update/",
         type: "post",
         headers: {
-          Authorization: "Bearer " + store.state.student.token,
+          Authorization: "Bearer " + store.state.teacher.token,
         },
         data: {
           oldPassword: oldPassword.value,
@@ -170,21 +132,20 @@ export default {
           confirmNewPassword: confirmNewPassword.value,
         },
         success(resp) {
-          //console.log(resp);
           if (resp.success == true) {
-            store.dispatch("getStudentInfo", {
-              success() {
-                store.commit("updateStudentPullingInfo", false);
-              },
-              error() {
-                store.commit("updateStudentPullingInfo", false);
-              },
-            });
+            // store.dispatch("getStudentInfo", {
+            //   success() {
+            //     store.commit("updateStudentPullingInfo", false);
+            //   },
+            //   error() {
+            //     store.commit("updateStudentPullingInfo", false);
+            //   },
+            // });
             oldPassword.value = "";
             newPassword.value = "";
             confirmNewPassword.value = "";
-            modal_error_message.value = "修改信息成功！";
             showSuccess.value = true;
+            modal_error_message.value = "修改信息成功！";
           } else {
             error_message.value = resp.errorMsg;
           }
@@ -195,27 +156,27 @@ export default {
         },
       });
     };
+
     return {
       oldPassword,
       newPassword,
       showSuccess,
       confirmNewPassword,
-      updateStudentPassword,
+      updateTeacherPassword,
       error_message,
       closeModal,
-      handleAvatarChange,
       modal_error_message,
     };
   },
 };
 </script>
-  
-  <style scoped>
-div.error-message {
+    
+    <style scoped>
+    div.error-message {
   font-weight: 700;
   color: red;
 }
-/* 模态框居中显示 */
+  /* 模态框居中显示 */
 .modal {
   display: flex;
   align-items: center;
@@ -232,5 +193,5 @@ div.error-message {
   opacity: 0.5;
 }
 </style>
-  
-  
+    
+    

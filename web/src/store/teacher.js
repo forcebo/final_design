@@ -26,6 +26,7 @@ export default ({
         state.id = teacher.id;
         state.username = teacher.username;
         state.photo = teacher.photo;
+        state.identity = teacher.identity;
         state.realname = teacher.realname;
         state.sex = teacher.sex;
         state.age = teacher.age;
@@ -44,6 +45,7 @@ export default ({
         state.id = "";
         state.username = "";
         state.photo = "";
+        state.identity = "";
         state.realname = "";
         state.sex = "";
         state.age = "";

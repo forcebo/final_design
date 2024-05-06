@@ -5,7 +5,9 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.finaldesign.backend.Mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.Result;
+import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.pojo.Teacher;
+import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.utils.JwtUtil;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -153,17 +156,134 @@ public class TeacherServiceImpl implements UserService {
 
     @Override
     public Result updateInfo(Map<String, String> map) {
-        return null;
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+
+        String username = map.get("username");
+        String identity = map.get("identity");
+        String realname = map.get("realname");
+        String age = map.get("age");
+        String education = map.get("education");
+        String major = map.get("major");
+        String phone = map.get("phone");
+        String address = map.get("address");
+        String description = map.get("description");
+
+        if(StrUtil.isBlank(username)) {
+            return Result.fail("用户名不能改为空");
+        }
+        if (StrUtil.isBlank(identity)) {
+
+        }
+        if (StrUtil.isBlank(realname)) {
+            return Result.fail("真实姓名不能改为空");
+        }
+        if (StrUtil.isBlank(age)) {
+            return Result.fail("年龄不能为空");
+        }
+        if (StrUtil.isBlank(education)) {
+            return Result.fail("学历不能为空");
+        }
+        if (StrUtil.isBlank(major)) {
+            return Result.fail("专业不能为空");
+        }
+        if(!Validator.isMobile(phone)) {
+            return Result.fail("请填入正确的手机号");
+        }
+        if (StrUtil.isBlank(address)) {
+            return Result.fail("地址不能为空");
+        }
+        if (!username.equals(teacher.getUsername())) {
+            QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("username", username);
+            List<Teacher> users = teacherMapper.selectList(queryWrapper);
+            if (!users.isEmpty()) {
+                return Result.fail("用户名已经存在");
+            }
+        }
+        if (!phone.equals(teacher.getPhone())) {
+            QueryWrapper<Teacher> phoneQueryWrapper = new QueryWrapper<>();
+            phoneQueryWrapper.eq("phone", phone);
+            List<Teacher> users2 = teacherMapper.selectList(phoneQueryWrapper);
+            if (!users2.isEmpty()) {
+                return Result.fail("手机号已存在");
+            }
+        }
+        Teacher new_teacher = new Teacher(teacher.getId(), username, teacher.getPassword(), identity, realname
+        , teacher.getSex(), Integer.parseInt(age), education, major, phone, address, description, teacher.getCity());
+
+        teacherMapper.updateById(new_teacher);
+
+        return Result.ok();
     }
 
     @Override
-    public Result updatePassword(String password, String changePassword, String changeConfirmPassword) {
-        return null;
+    public Result updatePassword(String oldPassword, String newPassword, String confirmNewPassword) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+
+        if (StrUtil.isBlank(oldPassword)) {
+            return Result.fail("请输入原密码");
+        }
+        if (StrUtil.isBlank(newPassword)) {
+            return Result.fail("修改后的密码不能为空");
+        }
+        if (StrUtil.isBlank(confirmNewPassword)) {
+            return Result.fail("两次修改后的密码不相同");
+        }
+        if (!newPassword.equals(confirmNewPassword)) {
+            return Result.fail("两次修改后的密码不相同");
+        }
+
+        if (!passwordEncoder.matches(oldPassword, teacher.getPassword())) {
+            return Result.fail("用户原密码错误");
+        } else {
+            teacher.setPassword(passwordEncoder.encode(newPassword));
+            teacherMapper.updateById(teacher);
+            return Result.ok();
+        }
     }
 
     @Override
     public Result updatePhoto(String photo) {
-        return null;
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+        String oldPhotoUrl = teacher.getPhoto();
+        if (!StrUtil.isBlank(oldPhotoUrl)) {
+            String path = oldPhotoUrl.replaceFirst("^https?://[^/]+", "");
+            String oldFileUrl = "D:/" + path;
+            File oldFile =  new File(oldFileUrl);
+            if (oldFile.exists()) {
+                boolean deleted = oldFile.delete();
+                if (!deleted) {
+                    System.out.println("删除之前的图片文件失败，请手动删除");
+                }
+            }
+        }
+        teacher.setPhoto(photo);
+        teacherMapper.updateById(teacher);
+        return Result.ok(photo);
     }
 
     public boolean isValidOptions(String option, String[] validOptions) {

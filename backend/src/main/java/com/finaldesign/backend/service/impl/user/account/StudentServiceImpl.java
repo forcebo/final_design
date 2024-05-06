@@ -207,20 +207,17 @@ public class StudentServiceImpl implements UserService {
         if(StrUtil.isBlank(oldPassword)) {
             return Result.fail("请输入原密码");
         }
+        if (StrUtil.isBlank(newPassword)) {
+            return Result.fail("修改后的密码不能为空");
+        }
+        if (!newPassword.equals(confirmNewPassword)) {
+            return Result.fail("两次修改后的密码不相同");
+        }
         if (!passwordEncoder.matches(oldPassword, student.getPassword())) {
             return Result.fail("用户原密码错误");
         } else {
-            if (StrUtil.isBlank(newPassword)) {
-                return Result.fail("修改后的密码不能为空");
-            }
-            if (!newPassword.equals(confirmNewPassword)) {
-                return Result.fail("两次修改后的密码不相同");
-            }
-            Student new_Student = new Student(student.getId(), student.getUsername(),
-                    passwordEncoder.encode(newPassword), student.getPhoto(), student.getRealname(),
-                    student.getSex(), student.getPhone(), student.getAddress());
-            studentMapper.updateById(new_Student);
-
+            student.setPassword(passwordEncoder.encode(newPassword));
+            studentMapper.updateById(student);
             return Result.ok();
         }
     }

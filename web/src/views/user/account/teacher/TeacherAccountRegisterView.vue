@@ -172,7 +172,7 @@
               for="teacherName"
               class="col-sm-5 col-form-label text-end"
             >
-              <span style="color: red; font-weight: bold;">*</span>学员姓名
+              <span style="color: red; font-weight: bold;">*</span>真实姓名
             </label>
             <div class="col-sm-7">
               <input

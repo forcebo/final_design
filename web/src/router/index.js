@@ -15,6 +15,8 @@ import StudentInfoUpdateView from '@/views/student/StudentInfoUpdateView'
 import StudentPasswordUpdateView from '@/views/student/StudentPasswordUpdateView'
 import ReleaseJobInfomationView from '@/views/ReleaseJobInformationView'
 import TeacherInfoView from '@/views/teacher/TeacherInfoView'
+import TeacherInfoUpdateView from '@/views/teacher/TeacherInfoUpdateView'
+import TeacherPasswordUpdateView from '@/views/teacher/TeacherPasswordUpdateView'
 
 const routes = [
   {
@@ -82,7 +84,7 @@ const routes = [
     }
   },
   {
-    path: "/student/info/password/update",
+    path: "/student/info/password/update/",
     name: "studnet_password_update_index",
     component: StudentPasswordUpdateView,
     meta: {
@@ -130,9 +132,25 @@ const routes = [
     }
   },
   {
-    path: "/teacher/info/index/",
+    path: "/teacher/info/",
     name: "teacher_info_index",
     component: TeacherInfoView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/teacher/info/update/",
+    name: "teacher_info_update_index",
+    component: TeacherInfoUpdateView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/teacher/info/password/update/",
+    name: "teacher_info_password_index",
+    component: TeacherPasswordUpdateView,
     meta: {
       requestAuth: true,
     }
