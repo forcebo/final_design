@@ -21,6 +21,7 @@ public class Teacher {
     private String sex;
     private Integer age;
     private String education; // 学历
+    private String school;
     private String major; // 专业
     private String phone;
     private String address;
@@ -29,7 +30,8 @@ public class Teacher {
     private String description;
     private String city;
 
-    public Teacher(Integer id, String username, String password, String identity, String realname, String sex, Integer age, String education, String major, String phone, String address, String photo, String city) {
+    public Teacher(Integer id, String username, String password, String identity, String realname,
+                   String sex, Integer age, String education, String school, String major, String phone, String address, String photo, String city) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -38,6 +40,7 @@ public class Teacher {
         this.sex = sex;
         this.age = age;
         this.education = education;
+        this.school = school;
         this.major = major;
         this.phone = phone;
         this.address = address;

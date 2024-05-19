@@ -1,7 +1,7 @@
 package com.finaldesign.backend.utils.filter;
 
-import com.finaldesign.backend.Mapper.StudentMapper;
-import com.finaldesign.backend.Mapper.TeacherMapper;
+import com.finaldesign.backend.mapper.StudentMapper;
+import com.finaldesign.backend.mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.pojo.Teacher;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
@@ -11,13 +11,9 @@ import com.sun.istack.internal.NotNull;
 import io.jsonwebtoken.Claims;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;

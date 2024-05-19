@@ -2,7 +2,7 @@ package com.finaldesign.backend.service.impl.student.requirement;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
-import com.finaldesign.backend.Mapper.RequirementMapper;
+import com.finaldesign.backend.mapper.RequirementMapper;
 import com.finaldesign.backend.pojo.Requirement;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.pojo.Student;

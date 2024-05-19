@@ -251,6 +251,23 @@
           </div>
           <div class="mb-3 row align-items-center" style="margin-top: 10px;">
             <label
+              for="school"
+              class="col-sm-5 col-form-label text-end"
+            >
+              <span style="color: red; font-weight: bold;">*</span>就读或毕业学校
+            </label>
+            <div class="col-sm-7">
+              <input
+                v-model="school"
+                type="text"
+                class="form-control"
+                id="school"
+                placeholder="请输入就读或毕业学校"
+              />
+            </div>
+          </div>
+          <div class="mb-3 row align-items-center" style="margin-top: 10px;">
+            <label
               for="major"
               class="col-sm-5 col-form-label text-end"
             >
@@ -392,6 +409,7 @@ export default {
     let sex = ref("");
     let age = ref("");
     let education = ref("");
+    let school = ref("");
     let major = ref("");
     let phone = ref("");
     let address = ref("");
@@ -423,6 +441,7 @@ export default {
           sex: sex.value,
           age: age.value,
           education: education.value,
+          school: school.value,
           major: major.value,
           phone: phone.value,
           address: address.value,
@@ -451,6 +470,7 @@ export default {
       sex,
       age,
       education,
+      school,
       major,
       phone,
       address,

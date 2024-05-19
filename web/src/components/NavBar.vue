@@ -64,7 +64,7 @@
           <li class="nav-item">
             <router-link
               :class="
-                route_name == 'tutor_search_index'
+                route_name == 'tutor_search_index' || route_name == 'tutor_detail_index'
                   ? 'nav-link active'
                   : 'nav-link'
               "
@@ -72,16 +72,7 @@
               >家教搜索</router-link
             >
           </li>
-          <li class="nav-item">
-            <router-link
-              :class="
-                route_name == 'reserve_index' ? 'nav-link active' : 'nav-link'
-              "
-              :to="{ name: 'reserve_index' }"
-              >预约私教</router-link
-            >
-          </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link
               :class="
                 route_name == 'course_listen_index'
@@ -91,7 +82,7 @@
               :to="{ name: 'course_listen_index' }"
               >课程试听</router-link
             >
-          </li>
+          </li> -->
           <li class="nav-item" v-if="$store.state.teacher.is_login">
             <router-link
               :class="

@@ -1,7 +1,7 @@
 package com.finaldesign.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.finaldesign.backend.Mapper.StudentMapper;
+import com.finaldesign.backend.mapper.StudentMapper;
 import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;

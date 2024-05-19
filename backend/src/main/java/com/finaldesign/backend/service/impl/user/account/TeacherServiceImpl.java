@@ -3,11 +3,9 @@ package com.finaldesign.backend.service.impl.user.account;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.finaldesign.backend.Mapper.TeacherMapper;
+import com.finaldesign.backend.mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.Result;
-import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.pojo.Teacher;
-import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.utils.JwtUtil;
@@ -79,6 +77,7 @@ public class TeacherServiceImpl implements UserService {
         String sex = map.get("sex");
         String age = map.get("age");
         String education = map.get("education");
+        String school = map.get("school");
         String major = map.get("major");
         String phone = map.get("phone");
         String address = map.get("address");
@@ -111,6 +110,9 @@ public class TeacherServiceImpl implements UserService {
         String[] allowedEducation = {"大专以下", "大专在读", "大专毕业", "本科在读", "本科毕业", "硕士在读", "硕士毕业", "博士在读", "博士毕业"};
         if (!isValidOptions(education, allowedEducation)) {
             return Result.fail("请选择正确的学历");
+        }
+        if (StrUtil.isBlank(school)) {
+            return Result.fail("请输入你的就读或毕业学校");
         }
         if (StrUtil.isBlank(major)) {
             return Result.fail("请填入你的专业");
@@ -146,7 +148,7 @@ public class TeacherServiceImpl implements UserService {
         }
         String encodedPassword = passwordEncoder.encode(password);
         String photo = "https://cdn.acwing.com/media/user/profile/photo/160348_lg_916a3c928b.jpg";
-        Teacher teacher = new Teacher(null, username, encodedPassword, identity, realname, sex, Integer.parseInt(age), education, major,
+        Teacher teacher = new Teacher(null, username, encodedPassword, identity, realname, sex, Integer.parseInt(age), education, school, major,
                 phone, address, photo, city);
 
         teacherMapper.insert(teacher);
@@ -217,7 +219,7 @@ public class TeacherServiceImpl implements UserService {
             }
         }
         Teacher new_teacher = new Teacher(teacher.getId(), username, teacher.getPassword(), identity, realname
-        , teacher.getSex(), Integer.parseInt(age), education, major, phone, address, description, teacher.getCity());
+        , teacher.getSex(), Integer.parseInt(age), education, teacher.getSchool(), major, phone, address, description, teacher.getCity());
 
         teacherMapper.updateById(new_teacher);
 

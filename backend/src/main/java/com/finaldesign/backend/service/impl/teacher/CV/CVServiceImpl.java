@@ -2,16 +2,18 @@ package com.finaldesign.backend.service.impl.teacher.CV;
 
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import com.finaldesign.backend.Mapper.CVMapper;
-import com.finaldesign.backend.pojo.CV;
-import com.finaldesign.backend.pojo.Result;
-import com.finaldesign.backend.pojo.Teacher;
+import cn.hutool.json.JSONObject;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.finaldesign.backend.mapper.CVMapper;
+import com.finaldesign.backend.pojo.*;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.teacher.CVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CVServiceImpl implements CVService {
@@ -48,5 +50,25 @@ public class CVServiceImpl implements CVService {
         cvMapper.insert(cv);
 
         return Result.ok();
+    }
+
+    @Override
+    public Result getJobInformation() {
+        return null;
+    }
+
+    @Override
+    public Result multipleTablesAndCondition(Integer currentPage, ConditionQueryTeacher condition) {
+        if (currentPage == null || currentPage < 1) {
+            return Result.fail("请输入正确参数");
+        }
+        Page<TeacherInfo> pageInfo = new Page<>(currentPage, 10);
+        Page<TeacherInfo> res = cvMapper.findAndPage(pageInfo, condition);
+        long total = res.getTotal();
+        List<TeacherInfo> teachers = res.getRecords();
+        JSONObject resp = new JSONObject();
+        resp.put("teachers", teachers);
+        resp.put("total_teachers", total);
+        return Result.ok(resp);
     }
 }

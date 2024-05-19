@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView'
 import TutorSearchView from '@/views/TutorSearchView'
-import ReserveView from '@/views/ReserveView'
+import TutorDetailView from '@/views/TutorDetailView'
 import CourseListenView from '@/views/CourseListenView'
 import ReleaseRequirementView from '@/views/ReleaseRequirementView'
 import NotFoundView from '@/views/NotFoundView'
@@ -44,11 +44,11 @@ const routes = [
     }
   },
   {
-    path: "/reserve/",
-    name: "reserve_index",
-    component: ReserveView,
+    path: "/tutor/detail/",
+    name: "tutor_detail_index",
+    component: TutorDetailView,
     meta: {
-      requestAuth: true,
+      requestAuth: false,
     }
   },
   {

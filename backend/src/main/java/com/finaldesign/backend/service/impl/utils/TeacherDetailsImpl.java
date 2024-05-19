@@ -1,11 +1,9 @@
 package com.finaldesign.backend.service.impl.utils;
 
-import com.finaldesign.backend.Mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.Teacher;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

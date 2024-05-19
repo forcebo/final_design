@@ -1,4 +1,4 @@
-package com.finaldesign.backend.Mapper;
+package com.finaldesign.backend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.finaldesign.backend.pojo.Teacher;

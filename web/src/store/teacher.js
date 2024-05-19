@@ -10,6 +10,7 @@ export default ({
     sex: "",
     age: "",
     education: "",
+    school: "",
     major: "",
     phone: "",
     address: "",
@@ -31,6 +32,7 @@ export default ({
         state.sex = teacher.sex;
         state.age = teacher.age;
         state.education = teacher.education;
+        state.school = teacher.school;
         state.major = teacher.major;
         state.phone = teacher.phone;
         state.address = teacher.address;
@@ -50,6 +52,7 @@ export default ({
         state.sex = "";
         state.age = "";
         state.education = "";
+        state.school = "";
         state.major = "";
         state.phone = "";
         state.address = "";

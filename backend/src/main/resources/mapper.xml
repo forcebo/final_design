@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.finaldesign.backend.mapper.CVMapper">
+    <resultMap id="teacherInfo" type="com.finaldesign.backend.pojo.TeacherInfo">
+        <result property="teacherId" column="teacher_id"/>
+        <result property="subjects" column="subjects"/>
+        <result property="description" column="cv_description"/>
+        <result property="areas" column="areas"/>
+        <result property="studentEvaluate" column="student_evaluate"/>
+        <result property="salary" column="salary"/>
+        <result property="mode" column="mode"/>
+        <result property="teacher.id" column="tno"/>
+        <result property="teacher.realname" column="realname"/>
+        <result property="teacher.identity" column="identity"/>
+        <result property="teacher.school" column="school"/>
+        <result property="teacher.sex" column="sex"/>
+        <result property="teacher.education" column="education"/>
+        <result property="teacher.major" column="major"/>
+        <result property="teacher.photo" column="photo"/>
+    </resultMap>
+    <select id="findAndPage" resultMap="teacherInfo">
+        SELECT cv.teacher_id, cv.subjects, cv.description as cv_description, cv.areas, cv.student_evaluate, cv.mode, cv.salary,
+               teacher.id as tno, teacher.realname, teacher.identity, teacher.school, teacher.sex, teacher.education, teacher.major,
+               teacher.photo FROM t_cv cv, t_teacher teacher WHERE cv.teacher_id = teacher.id
+        <if test="condition.id !=null and condition.id !=''">
+            and teacher.id=#{condition.id}
+        </if>
+        <if test="condition.subject !=null and condition.subject !=''">
+            and cv.subjects like concat('%', #{condition.subject}, '%')
+        </if>
+        <if test="condition.area != null and condition.area !=''">
+            and cv.areas like concat('%', #{condition.area}, '%')
+        </if>
+        <if test="condition.school !=null and condition.school !=''">
+            and teacher.school=#{condition.school}
+        </if>
+        <if test="condition.education !=null and condition.education !=''">
+            and teacher.education=#{condition.education}
+        </if>
+        <if test="condition.sex !=null and condition.sex !=''">
+            and teacher.sex=#{condition.sex}
+        </if>
+        <if test="condition.mode !=null and condition.mode !=''">
+            and cv.mode=#{condition.mode}
+        </if>
+    </select>
+</mapper>

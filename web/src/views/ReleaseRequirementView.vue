@@ -30,14 +30,14 @@
     <div class="row justify-content-center">
       <div
         class="card"
-        style="height: 1100px; width: 1000px; border-radius: 0%"
+        style=" width: 1000px; border-radius: 0%"
       >
         <div class="row" style="margin-top: 10px">
           <!-- 左侧导航栏 -->
-          <div class="col-md-8">
+          <div class="col-md-9">
             <div
               class="card"
-              style="height: 1050px; width: 650px; border-radius: 0%"
+              style="height: 1050px; width: 725px; border-radius: 0%"
             >
               <div style="background-color: rgb(253, 250, 192)">
                 <img
@@ -632,10 +632,10 @@
             </div>
           </div>
           <!-- 右侧内容 -->
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div
               class="card"
-              style="height: 200px; width: 300px; border-radius: 0%"
+              style="height: 200px; width: 230px; border-radius: 0%"
             >
               <div style="background-color: rgb(249, 232, 185)">
                 <img
