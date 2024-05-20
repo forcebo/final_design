@@ -264,7 +264,7 @@
                                       <br>
                                       <span>{{ "薪水要求:" + teacher.salary}}</span>
                                       <br><br>
-                                      <button type="button" @click="lookDetail" class="btn btn-info" style="font-size: x-small; height: 30px;">查看详情</button>
+                                      <button type="button" @click="lookDetail(teacher.teacher.id)" class="btn btn-info" style="font-size: x-small; height: 30px;">查看详情</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -453,8 +453,8 @@ export default {
       pull_page(id.value, subject.value, area.value, school.value, education.value, sex.value, mode.value, current_page)
     }
 
-    const lookDetail = () => {
-      window.open('/tutor/detail/', '_blank');
+    const lookDetail = (id) => {
+      window.open('/tutor/detail/?id='+ id, '_blank');
     };
 
     return {

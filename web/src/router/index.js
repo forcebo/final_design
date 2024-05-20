@@ -17,6 +17,8 @@ import ReleaseJobInfomationView from '@/views/ReleaseJobInformationView'
 import TeacherInfoView from '@/views/teacher/TeacherInfoView'
 import TeacherInfoUpdateView from '@/views/teacher/TeacherInfoUpdateView'
 import TeacherPasswordUpdateView from '@/views/teacher/TeacherPasswordUpdateView'
+import TutorReserveView from '@/views/TutorReserveView'
+import TutorCourseView from '@/views/TutorCourseView'
 
 const routes = [
   {
@@ -52,8 +54,24 @@ const routes = [
     }
   },
   {
-    path: "/course/listen/",
-    name: "course_listen_index",
+    path: "/tutor/reserve/",
+    name: "tutor_reserve_index",
+    component: TutorReserveView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/tutor/course/",
+    name: "tutor_course_index",
+    component: TutorCourseView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/tutor/course/listen/",
+    name: "tutot_course_listen_index",
     component: CourseListenView,
     meta: {
       requestAuth: true,

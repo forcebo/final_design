@@ -3,8 +3,10 @@ package com.finaldesign.backend.service.impl.teacher.CV;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.CVMapper;
+import com.finaldesign.backend.mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.*;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.teacher.CVService;
@@ -14,11 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class CVServiceImpl implements CVService {
     @Autowired
     private CVMapper cvMapper;
+    @Autowired
+    private TeacherMapper teacherMapper;
 
     @Override
     public Result insertCV(CV cv) {
@@ -70,5 +76,21 @@ public class CVServiceImpl implements CVService {
         resp.put("teachers", teachers);
         resp.put("total_teachers", total);
         return Result.ok(resp);
+    }
+
+    @Override
+    public Result getTeacherInfoById(Integer id) {
+        if (id == null || id < 1) {
+            return Result.fail("教师不存在");
+        }
+        JSONObject jsonObject = new JSONObject();
+        QueryWrapper<CV> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("teacher_id", id);
+        CV cv = cvMapper.selectOne(queryWrapper);
+        jsonObject.put("cv", cv);
+        Teacher teacher = teacherMapper.selectById(id);
+        jsonObject.put("teacher", teacher);
+
+        return Result.ok(jsonObject);
     }
 }

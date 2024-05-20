@@ -10,4 +10,5 @@ public interface CVService {
     Result insertCV(CV cv);
     Result getJobInformation();
     Result multipleTablesAndCondition(Integer currentPage, ConditionQueryTeacher condition);
+    Result getTeacherInfoById(Integer id);
 }

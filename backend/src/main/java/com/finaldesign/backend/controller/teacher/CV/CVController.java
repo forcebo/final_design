@@ -26,4 +26,9 @@ public class CVController {
     public Result getTeacherList(@PathVariable Integer currentPage, @RequestBody ConditionQueryTeacher condition) {
         return cvService.multipleTablesAndCondition(currentPage, condition);
     }
+
+    @GetMapping("/student/get/teacher/info/{id}")
+    public Result getTeacherInfo(@PathVariable Integer id) {
+        return cvService.getTeacherInfoById(id);
+    }
 }
