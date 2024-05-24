@@ -71,10 +71,10 @@ const routes = [
   },
   {
     path: "/tutor/course/listen/",
-    name: "tutot_course_listen_index",
+    name: "tutor_course_listen_index",
     component: CourseListenView,
     meta: {
-      requestAuth: true,
+      requestAuth: false,
     }
   },
   {

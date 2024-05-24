@@ -8,20 +8,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@TableName("t_comment")
-public class Comment {
+@NoArgsConstructor
+@TableName("t_order")
+public class Order {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer sendId;
-    private Integer receive_id;
-    private String content;
+    private Integer studentId;
+    private Integer teacherId;
+    private Integer courseId;
+    private BigDecimal price;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date time;
-    private Integer is_good;
     private Integer status;
 }

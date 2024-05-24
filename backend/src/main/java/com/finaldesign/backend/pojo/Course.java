@@ -3,25 +3,25 @@ package com.finaldesign.backend.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@TableName("t_comment")
-public class Comment {
+@NoArgsConstructor
+@TableName("t_course")
+public class Course {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer sendId;
-    private Integer receive_id;
-    private String content;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
-    private Date time;
-    private Integer is_good;
+    private String name;
+    private String description;
+    private Integer teacherId;
+    private String thumbnail;
+    private String videoUrl;
+    private String area;
+    private BigDecimal price;
     private Integer status;
 }

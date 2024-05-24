@@ -13,7 +13,7 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @GetMapping("/comment/get/{receiveId}")
+    @GetMapping("/comment/get/{receiveId}/")
     public Result getCommentByReceive(@PathVariable Integer receiveId) {
         return commentService.getCommentByReceiveId(receiveId);
     }

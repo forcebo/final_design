@@ -3,7 +3,7 @@ package com.finaldesign.backend.controller.teacher.CV;
 import com.finaldesign.backend.pojo.CV;
 import com.finaldesign.backend.pojo.ConditionQueryTeacher;
 import com.finaldesign.backend.pojo.Result;
-import com.finaldesign.backend.service.teacher.CVService;
+import com.finaldesign.backend.service.teacher.cv.CVService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

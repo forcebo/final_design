@@ -65,6 +65,7 @@
             <router-link
               :class="
                 route_name == 'tutor_search_index' || route_name == 'tutor_detail_index'
+                || route_name == 'tutor_course_index' || route_name == 'tutor_course_listen_index'
                   ? 'nav-link active'
                   : 'nav-link'
               "
@@ -72,6 +73,7 @@
               >家教搜索</router-link
             >
           </li>
+          
           <!-- <li class="nav-item">
             <router-link
               :class="
@@ -115,6 +117,7 @@
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
+              @click.prevent
             >
             <img
             class="rounded-circle"
@@ -146,6 +149,7 @@
               role="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
+              @click.prevent
             >
             <img
             class="rounded-circle"
@@ -196,6 +200,7 @@
 <script>
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 import { useStore } from "vuex";

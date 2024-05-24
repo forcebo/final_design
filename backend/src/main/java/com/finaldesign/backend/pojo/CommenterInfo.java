@@ -10,9 +10,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommenterInfo {
-    String username;
-    String photo;
-    String content;
-    String time;
-    String isGood;
+    private String username;
+    private String photo;
+    private String content;
+    private String time;
+    private String isGood;
 }

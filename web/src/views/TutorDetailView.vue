@@ -251,7 +251,7 @@ export default {
     }
 
     const buyCourse = () => {
-      window.open('/tutor/course/?id='+ tno.value, '_blank');
+      window.open('/tutor/course/?id='+ tno.value + '&name=' + realname.value + '&photo=' + photo.value, '_blank');
     }
 
     getTeacherInfoById();
