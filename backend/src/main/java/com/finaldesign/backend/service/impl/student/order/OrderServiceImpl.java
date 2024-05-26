@@ -7,6 +7,7 @@ import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.student.order.OrderService;
+import com.finaldesign.backend.utils.OrderIdCreateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStudentId(student.getId());
         order.setStatus(0);
         order.setTime(new Date());
+        order.setNo(OrderIdCreateUtil.nextId());
         orderMapper.insert(order);
 
         return Result.ok();
@@ -79,5 +81,23 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return Result.ok(false);
+    }
+
+    @Override
+    public Result getOrdersByStudentId() {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
+            return Result.fail("token不匹配,请注册学生用户再购买课程");
+        }
+
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("student_id", student.getId());
+
+        List<Order> orders = orderMapper.selectList(queryWrapper);
+        return Result.ok(orders);
     }
 }

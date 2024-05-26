@@ -19,6 +19,8 @@ import TeacherInfoUpdateView from '@/views/teacher/TeacherInfoUpdateView'
 import TeacherPasswordUpdateView from '@/views/teacher/TeacherPasswordUpdateView'
 import TutorReserveView from '@/views/TutorReserveView'
 import TutorCourseView from '@/views/TutorCourseView'
+import StudentReservesView from '@/views/student/StudentReservesView'
+import StudentCourseOrdersView from '@/views/student/StudentCourseOrdersView'
 
 const routes = [
   {
@@ -134,6 +136,22 @@ const routes = [
     }
   },
   {
+    path: "/student/info/course/orders/",
+    name: "student_info_course_orders_reserves",
+    component: StudentCourseOrdersView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/student/info/reserves/",
+    name: "student_info_reserves",
+    component: StudentReservesView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
     path: "/teacher/account/register/",
     name: "teacher_account_register",
     component: TeacherAccountRegisterView,
@@ -141,6 +159,7 @@ const routes = [
       requestAuth: false,
     }
   },
+  
   {
     path: "/teacher/release/job/information/",
     name: "teacher_release_job_information_index",

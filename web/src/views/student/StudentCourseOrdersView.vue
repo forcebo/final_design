@@ -1,32 +1,31 @@
 <template>
   <StudentInfoTemplate>
+    <div class="row">
+      <span style="text-align: center;">我的课程订单</span>
+    </div>
     <div class="d-flex justify-content-center">
       <table class="table table-striped table-hover" style="font-size: x-small;">
                             <thead>
                                 <tr>
-                                    <th>教员编号</th>
-                                    <th>学科</th>
-                                    <th>上课时间</th>
-                                    <th>辅导方式</th>
-                                    <th>收费</th>
+                                    <th>编号</th>
+                                    <th>价格</th>
+                                    <th>时间</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="reserve in reserves" :key="reserve.id">
-                                    <td style="width: 10%;">
+                                <tr v-for="order in orders" :key="order.id">
+                                  <td style="width: 10%;">
                                       <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="font-weight: bold;">{{ reserve.teacherId }}</span>
+                                        <span style="font-weight: bold;">{{ order.no }}</span>
                                       </div>
                                     </td>
                                     <td style="width: 10%;">
-                                      <span>{{ reserve.subject }}</span>
+                                      <span>{{ order.price }}</span>
                                     </td>
-                                    <td style="width: 20%;">{{ reserve.classTime }}</td>
-                                    <td style="width: 20%;">{{ reserve.mode }}</td>
-                                    <td style="width: 20%;">{{ reserve.charge }}</td>
+                                    <td style="width: 20%;">{{ order.time }}</td>
                                     <td style="width: 20%;">
-                                      <button type="button" @click="() => router.push({ path: '/tutor/detail/', query: { id: reserve.teacherId } })" class="btn btn-info" style="font-size: x-small; height: 30px;">查看详情</button>
+                                      <button type="button" @click="() => router.push({ path: '/tutor/course/', query: { id: reserve.teacherId } })" class="btn btn-info" style="font-size: x-small; height: 30px;">查看详情</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -49,17 +48,17 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-    let reserves = ref([]);
-    const getReserves = () => {
+    let orders = ref([]);
+    const getCourseOrders = () => {
       $.ajax({
-        url: "http://127.0.0.1:3000/student/reserve/get/",
+        url: "http://127.0.0.1:3000/student/course/order/get/",
         type: "get",
         headers: {
           Authorization: "Bearer " + store.state.student.token,
         },
         success(resp) {
           if (resp.success == true) {
-            reserves.value = resp.data;
+            orders.value = resp.data;
           }
         },
         error(resp) {
@@ -67,9 +66,9 @@ export default {
         },
       });
     }
-    getReserves();
+    getCourseOrders();
     return {
-      reserves,
+      orders,
       router,
     }
   }

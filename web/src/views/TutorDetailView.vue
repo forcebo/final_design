@@ -120,6 +120,24 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="card mt-3">
+          <div class="card-header">
+            <strong>发表评论</strong>
+          </div>
+          <div class="card-body">
+            <form @submit.prevent="submitComment">
+              <div class="mb-3">
+                <label for="commentContent" class="form-label">评论内容</label>
+                <textarea id="commentContent" v-model="newCommentContent" class="form-control" rows="3" required></textarea>
+              </div>
+              <div class="mb-3 form-check">
+                <input type="checkbox" v-model="isGoodComment" class="form-check-input" id="isGoodComment">
+                <label class="form-check-label" for="isGoodComment">是否好评</label>
+              </div>
+              <button type="submit" class="btn btn-primary" style="text-align: right;">提交评论</button>
+            </form>
+          </div>
+        </div>
     </div>
     </div>
   </ContentField>
@@ -190,6 +208,9 @@ export default {
     let goodRate = ref("");
     let total = ref("");
     let ifReserve = ref(false);
+
+    let newCommentContent = ref("");
+    let isGoodComment = ref(false); 
     const urlParams = new URLSearchParams(window.location.search);
     tno.value = urlParams.get('id');
 
@@ -290,6 +311,35 @@ export default {
       });
     }
 
+    const submitComment = () => {
+      $.ajax({
+        url: "http://127.0.0.1:3000/comment/add/",
+        type: "post",
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        contentType: "application/json", // 指定请求的Content-Type为JSON
+        dataType: "json", // 指定预期的响应数据类型为JSON
+        data: JSON.stringify({
+          receiveId: tno.value,
+          content: newCommentContent.value,
+          isGood: isGoodComment.value? 1:0,
+      }),
+        success(resp) {
+          if (resp.success == true) {
+            alert("评论已提交，等待管理员审核");
+            newCommentContent.value = "";
+            isGoodComment.value = false;
+          } else {
+            alert("评论提交失败");
+          }
+        },
+        error(resp) {
+          console.error(resp);
+        },
+      });
+    };
+
     const reserveTo = () => {
       window.open('/tutor/reserve/?id='+ tno.value + '&name=' + realname.value, '_blank');
     }
@@ -323,9 +373,12 @@ export default {
       comments,
       total,
       ifReserve,
+      newCommentContent,
+      isGoodComment,
       reserveTo,
       buyCourse,
       cancelReserve,
+      submitComment,
     }
 
   }

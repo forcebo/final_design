@@ -19,9 +19,9 @@ public class ReserveController {
         return reserveService.reserveTeacher(reserve);
     }
 
-    @GetMapping("/student/reserve/get/{studentId}/")
-    public Result getReservesByStudentId(@PathVariable Integer studentId) {
-        return reserveService.getReservesByStudentId(studentId);
+    @GetMapping("/student/reserve/get/")
+    public Result getReservesByStudentId() {
+        return reserveService.getReservesByStudentId();
     }
 
     @GetMapping("/student/reserve/check/{teacherId}/")

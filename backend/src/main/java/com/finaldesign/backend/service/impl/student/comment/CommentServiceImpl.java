@@ -1,5 +1,6 @@
 package com.finaldesign.backend.service.impl.student.comment;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.finaldesign.backend.mapper.CommentMapper;
@@ -8,8 +9,11 @@ import com.finaldesign.backend.pojo.Comment;
 import com.finaldesign.backend.pojo.CommenterInfo;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.pojo.Student;
+import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.student.comment.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -58,5 +62,33 @@ public class CommentServiceImpl implements CommentService {
         jsonObject.put("goodRate", goodRate);
         jsonObject.put("total", comments.size());
         return Result.ok(jsonObject);
+    }
+
+    @Override
+    public Result addComment(Comment comment) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
+            return Result.fail("token不匹配,请注册学生用户再购买课程");
+        }
+
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+
+        if (comment == null) {
+            return Result.fail("评论失败");
+        }
+        if (comment.getReceiveId() == null || comment.getReceiveId() < 0) {
+            return Result.fail("评论失败");
+        }
+        if (StrUtil.isBlank(comment.getContent())) {
+            return Result.fail("请输入评论内容");
+        }
+        comment.setSendId(student.getId());
+        comment.setStatus(0);
+        comment.setTime(new Date());
+        commentMapper.insert(comment);
+        return Result.ok();
     }
 }

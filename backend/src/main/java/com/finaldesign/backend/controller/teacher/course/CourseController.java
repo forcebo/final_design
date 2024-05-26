@@ -12,12 +12,12 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping("/teacher/course/get/{id}/")
-    private Result getCoursesByTeacherId(@PathVariable Integer id) {
+    public Result getCoursesByTeacherId(@PathVariable Integer id) {
         return courseService.getCoursesByTeacherId(id);
     }
 
     @GetMapping("/course/get/{id}/")
-    private Result getCourseById(@PathVariable Integer id) {
+    public Result getCourseById(@PathVariable Integer id) {
         return courseService.getCoursesById(id);
     }
 }

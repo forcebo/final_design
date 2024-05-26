@@ -13,12 +13,12 @@ public class CVController {
     private CVService cvService;
 
     @PostMapping("/teacher/release/job/information/")
-    private Result releaseJobInformation(@RequestBody CV cv) {
+    public Result releaseJobInformation(@RequestBody CV cv) {
         return cvService.insertCV(cv);
     }
 
     @PostMapping("/teacher/get/job/information/")
-    private Result getJobInformation(){
+    public Result getJobInformation(){
         return cvService.getJobInformation();
     }
 

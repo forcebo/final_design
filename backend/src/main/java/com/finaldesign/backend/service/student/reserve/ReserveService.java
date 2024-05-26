@@ -5,7 +5,7 @@ import com.finaldesign.backend.pojo.Result;
 
 public interface ReserveService {
     Result reserveTeacher(Reserve reserve);
-    Result getReservesByStudentId(Integer studentId);
+    Result getReservesByStudentId();
     Result checkIfReserve(Integer teacherId);
     Result cancelReserve(Integer teacherId);
 }

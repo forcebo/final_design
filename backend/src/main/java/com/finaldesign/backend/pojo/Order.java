@@ -18,6 +18,7 @@ import java.util.Date;
 public class Order {
     @TableId(type = IdType.AUTO)
     private Integer id;
+    private Long no;
     private Integer studentId;
     private Integer teacherId;
     private Integer courseId;

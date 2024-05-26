@@ -18,10 +18,10 @@ public class Comment {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer sendId;
-    private Integer receive_id;
+    private Integer receiveId;
     private String content;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date time;
-    private Integer is_good;
+    private Integer isGood;
     private Integer status;
 }

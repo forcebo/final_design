@@ -6,4 +6,5 @@ import com.finaldesign.backend.pojo.Result;
 public interface OrderService {
     Result addOrder(Order order);
     Result checkOrder(Integer courseId);
+    Result getOrdersByStudentId();
 }

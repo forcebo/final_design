@@ -74,14 +74,21 @@ public class ReserveServiceImpl implements ReserveService {
     }
 
     @Override
-    public Result getReservesByStudentId(Integer studentId) {
-        if (studentId == null || studentId <= 0) {
-            return Result.fail("获取预约失败");
+    public Result getReservesByStudentId() {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
+            return Result.fail("token不匹配, 请注册学生用户然后再预约教师");
         }
+
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+
         QueryWrapper<Reserve> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("student_id", studentId);
-        List<Reserve> reserveList = reserveMapper.selectList(queryWrapper);
-        return Result.ok(reserveList);
+        queryWrapper.eq("student_id", student.getId());
+        List<Reserve> reserves = reserveMapper.selectList(queryWrapper);
+        return Result.ok(reserves);
     }
 
     @Override

@@ -13,12 +13,17 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/student/course/order/add/")
-    private Result releaseJobInformation(@RequestBody Order order) {
+    public Result releaseJobInformation(@RequestBody Order order) {
         return orderService.addOrder(order);
     }
 
     @GetMapping("/student/course/order/check/{id}/")
-    private Result checkOrder(@PathVariable Integer id) {
+    public Result checkOrder(@PathVariable Integer id) {
         return orderService.checkOrder(id);
+    }
+
+    @GetMapping("/student/course/order/get/")
+    public Result getOrdersByStudentId() {
+        return orderService.getOrdersByStudentId();
     }
 }
