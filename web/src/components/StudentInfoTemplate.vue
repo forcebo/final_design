@@ -81,15 +81,15 @@
                 </div>
                 <div class="list-group" style="width: 200px; border-radius: 0%">
                   <router-link
-                    to="/student/order/"
+                    to="/student/info/course/orders/"
                     style="height: 35px"
                     class="list-group-item list-group-item-action"
                     aria-current="true"
                   >
-                    请家教订单
+                    我的课程订单
                   </router-link>
                   <router-link
-                    to="/student/release/"
+                    to="/student/info/reserves/"
                     style="height: 35px"
                     class="list-group-item list-group-item-action"
                     >我的预约</router-link

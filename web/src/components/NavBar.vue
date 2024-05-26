@@ -66,6 +66,7 @@
               :class="
                 route_name == 'tutor_search_index' || route_name == 'tutor_detail_index'
                 || route_name == 'tutor_course_index' || route_name == 'tutor_course_listen_index'
+                || route_name == 'tutor_reserve_index'
                   ? 'nav-link active'
                   : 'nav-link'
               "

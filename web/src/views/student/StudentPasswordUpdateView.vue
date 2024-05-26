@@ -118,44 +118,6 @@ export default {
       modal_error_message.value = "";
     };
 
-    const handleAvatarChange = (event) => {
-      const file = event.target.files[0];
-      const formData = new FormData();
-      formData.append("avatar", file);
-      console.log(formData);
-      $.ajax({
-        url: "http://127.0.0.1:3000/student/account/photo/update/", // 修改为实际的后端接口地址
-        type: "post",
-        data: formData,
-        processData: false, // 不对 data 进行序列化处理
-        contentType: false, // 不设置 content-type 头部
-        headers: {
-          Authorization: "Bearer " + store.state.student.token,
-        },
-        success(resp) {
-          // console.log("文件上传成功:", resp);
-          if (resp.success == true) {
-            store.dispatch("getStudentInfo", {
-              success() {
-                store.commit("updateStudentPullingInfo", false);
-              },
-              error() {
-                store.commit("updateStudentPullingInfo", false);
-              },
-            });
-            modal_error_message.value = "修改信息成功！";
-            showSuccess.value = true;
-          } else {
-            modal_error_message.value = resp.errorMsg;
-          }
-        },
-        error(resp) {
-          modal_error_message.value = resp.errorMsg;
-          console.error("文件上传失败:", resp);
-        },
-      });
-    };
-
     const updateStudentPassword = () => {
       error_message.value = "";
       $.ajax({
@@ -203,7 +165,6 @@ export default {
       updateStudentPassword,
       error_message,
       closeModal,
-      handleAvatarChange,
       modal_error_message,
     };
   },

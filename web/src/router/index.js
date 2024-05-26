@@ -165,6 +165,7 @@ const routes = [
       requestAuth: true,
     }
   },
+  
   {
     path: "/teacher/info/password/update/",
     name: "teacher_info_password_index",

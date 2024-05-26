@@ -52,8 +52,11 @@
         </tbody>
       </table>
       <div class="mb-3 d-flex" style="justify-content: flex-end">
-        <button type="button" class="btn btn-primary me-2" @click="reserveTo">
+        <button v-if="!ifReserve" type="button" class="btn btn-primary me-2" @click="reserveTo">
           预约该教员
+        </button>
+        <button v-if="ifReserve" type="button" class="btn btn-primary me-2" @click="cancelReserve">
+          取消预约
         </button>
         <button type="button" class="btn btn-primary me-2" @click="buyCourse">
           购买课程
@@ -186,6 +189,7 @@ export default {
     let comments = ref([]);
     let goodRate = ref("");
     let total = ref("");
+    let ifReserve = ref(false);
     const urlParams = new URLSearchParams(window.location.search);
     tno.value = urlParams.get('id');
 
@@ -226,6 +230,46 @@ export default {
       });
     };
 
+    const checkIfReserve = () => {
+      $.ajax({
+        url: "http://127.0.0.1:3000/student/reserve/check/" + tno.value + "/",
+        type: "get",
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        success(resp) {
+          if (resp.success == true) {
+            ifReserve.value = resp.data;
+          }
+        },
+        error(resp) {
+          console.error(resp);
+        },
+      });
+    }
+    checkIfReserve();
+
+    const cancelReserve = () => {
+      $.ajax({
+        url: "http://127.0.0.1:3000/student/reserve/cancel/" + tno.value + "/",
+        type: "get",
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        success(resp) {
+          if (resp.success == true) {
+            ifReserve.value = resp.data;
+            alert("取消预约成功!");
+          }else {
+            alert("取消预约失败");
+          }
+        },
+        error(resp) {
+          console.error(resp);
+        },
+      });
+    }
+
     const getComments = () => {
       $.ajax({
         url: "http://127.0.0.1:3000/comment/get/" + tno.value + "/", // 修改为实际的后端接口地址
@@ -247,7 +291,7 @@ export default {
     }
 
     const reserveTo = () => {
-      window.open('/tutor/reserve/?id='+ tno.value, '_blank');
+      window.open('/tutor/reserve/?id='+ tno.value + '&name=' + realname.value, '_blank');
     }
 
     const buyCourse = () => {
@@ -278,8 +322,10 @@ export default {
       goodRate,
       comments,
       total,
+      ifReserve,
       reserveTo,
       buyCourse,
+      cancelReserve,
     }
 
   }
