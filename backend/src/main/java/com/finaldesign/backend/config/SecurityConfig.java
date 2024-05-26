@@ -33,6 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("teacherDetailsServiceImpl")
     private UserDetailsService teacherDetailsService;
 
+    @Autowired
+    @Qualifier("adminDetailsServiceImpl")
+    private UserDetailsService adminDetailsService;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/student/account/token/", "/student/account/register/", "/img/**", "/bo/Videos/**").permitAll()
                 // 教师登录路径
                 .antMatchers("/teacher/account/token/", "/teacher/account/register/").permitAll()
+                .antMatchers("/admin/account/token/", "/admin/account/register/").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated();
 
@@ -59,7 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 将两个 AuthenticationProvider 添加到 AuthenticationManagerBuilder
         auth.authenticationProvider(studentAuthenticationProvider())
-                .authenticationProvider(teacherAuthenticationProvider());
+                .authenticationProvider(teacherAuthenticationProvider())
+                .authenticationProvider(adminAuthenticationProvider());
     }
 
     @Bean
@@ -80,6 +86,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider teacherAuthenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(teacherDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder()); // 设置密码编码器
+        return authProvider;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider adminAuthenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(adminDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder()); // 设置密码编码器
         return authProvider;
     }

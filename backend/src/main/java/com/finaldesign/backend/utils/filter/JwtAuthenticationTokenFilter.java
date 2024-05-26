@@ -1,9 +1,12 @@
 package com.finaldesign.backend.utils.filter;
 
+import com.finaldesign.backend.mapper.AdminMapper;
 import com.finaldesign.backend.mapper.StudentMapper;
 import com.finaldesign.backend.mapper.TeacherMapper;
+import com.finaldesign.backend.pojo.Admin;
 import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.pojo.Teacher;
+import com.finaldesign.backend.service.impl.utils.AdminDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.utils.JwtUtil;
@@ -33,6 +36,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired
     private TeacherMapper teacherMapper;
 
+    @Autowired
+    private AdminMapper adminMapper;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
 
@@ -61,6 +67,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } else if ("TEACHER".equals(role)) {
             Teacher teacher = teacherMapper.selectById(Integer.parseInt(userid));
             userDetails = new TeacherDetailsImpl(teacher);
+        } else if("ADMIN".equals(role)) {
+            Admin admin = adminMapper.selectById(Integer.parseInt(userid));
+            userDetails = new AdminDetailsImpl(admin);
         }
 
 

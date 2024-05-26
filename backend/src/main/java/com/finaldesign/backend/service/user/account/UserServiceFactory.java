@@ -1,5 +1,6 @@
 package com.finaldesign.backend.service.user.account;
 
+import com.finaldesign.backend.service.impl.user.account.AdminServiceImpl;
 import com.finaldesign.backend.service.impl.user.account.StudentServiceImpl;
 import com.finaldesign.backend.service.impl.user.account.TeacherServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,10 @@ public class UserServiceFactory {
 
 
     @Autowired
-    public UserServiceFactory(StudentServiceImpl studentService, TeacherServiceImpl teacherService, AuthenticationManager authenticationManager) {
+    public UserServiceFactory(StudentServiceImpl studentService, TeacherServiceImpl teacherService, AdminServiceImpl adminService) {
         USER_SERVICE_CACHE.put("student", studentService);
         USER_SERVICE_CACHE.put("teacher", teacherService);
+        USER_SERVICE_CACHE.put("admin", adminService);
     }
 
     public static UserService getUserService(String role) {

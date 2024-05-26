@@ -25,7 +25,7 @@
                                     </td>
                                     <td style="width: 20%;">{{ order.time }}</td>
                                     <td style="width: 20%;">
-                                      <button type="button" @click="() => router.push({ path: '/tutor/course/', query: { id: reserve.teacherId } })" class="btn btn-info" style="font-size: x-small; height: 30px;">查看详情</button>
+                                      <button type="button" @click="() => router.push({ path: '/tutor/course/', query: { id: order.teacherId } })" class="btn btn-info" style="font-size: x-small; height: 30px;">查看详情</button>
                                     </td>
                                 </tr>
                             </tbody>

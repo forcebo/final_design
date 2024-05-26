@@ -11,8 +11,8 @@ class BackendApplicationTests {
     @Test
     void contextLoads() {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode("lwb"));
-        System.out.println(passwordEncoder.matches("lwb", "$2a$10$XCZL7t.WPGXztepB2OUwzOSAmas2tOl810zqXD3jv40T/n1zqDlIq")); // encode():生成密文，matches():匹配明文
+        System.out.println(passwordEncoder.encode("123"));
+        System.out.println(passwordEncoder.matches("123", "$2a$10$XCZL7t.WPGXztepB2OUwzOSAmas2tOl810zqXD3jv40T/n1zqDlIq")); // encode():生成密文，matches():匹配明文
     }
 
 }

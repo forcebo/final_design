@@ -21,6 +21,8 @@ import TutorReserveView from '@/views/TutorReserveView'
 import TutorCourseView from '@/views/TutorCourseView'
 import StudentReservesView from '@/views/student/StudentReservesView'
 import StudentCourseOrdersView from '@/views/student/StudentCourseOrdersView'
+import AdminInfoTemplate from '@/views/admin/AdminInfoTemplate'
+import AdminLoginView from '@/views/admin/AdminLoginView'
 
 const routes = [
   {
@@ -194,6 +196,22 @@ const routes = [
     }
   },
   {
+    path: "/admin/login/",
+    name: "admin_login_index",
+    component: AdminLoginView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/",
+    name: "admin_index",
+    component: AdminInfoTemplate,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
     path: "/404/",
     name: "404",
     component: NotFoundView,
@@ -201,6 +219,7 @@ const routes = [
       requestAuth: false,
     }
   },
+  
   {
     path: "/:catchAll(.*)",
     redirect: "/404/"
