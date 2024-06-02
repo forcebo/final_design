@@ -11,4 +11,5 @@ public interface UserService {
     Result updateInfo(Map<String, String> map);
     Result updatePassword(String password, String changePassword, String changeConfirmPassword);
     Result updatePhoto(String photo);
+    Result getAll(Integer page);
 }

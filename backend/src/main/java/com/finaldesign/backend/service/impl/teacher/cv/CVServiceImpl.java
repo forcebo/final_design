@@ -4,6 +4,7 @@ import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.CVMapper;
 import com.finaldesign.backend.mapper.TeacherMapper;
@@ -15,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -90,5 +93,72 @@ public class CVServiceImpl implements CVService {
         jsonObject.put("teacher", teacher);
 
         return Result.ok(jsonObject);
+    }
+
+    @Override
+    public Result getTeacherNew() {
+        Page<CV> page = new Page<>(1, 5);
+        QueryWrapper<CV> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        Page<CV> cvPage = cvMapper.selectPage(page, queryWrapper);
+        List<CV> cvs = cvPage.getRecords();
+        List<Teacher> newTeachers = new ArrayList<>();
+        for (CV cv : cvs) {
+            QueryWrapper<Teacher> teacherQueryWrapper = new QueryWrapper<>();
+            teacherQueryWrapper.eq("id", cv.getTeacherId());
+            Teacher teacher = teacherMapper.selectOne(teacherQueryWrapper);
+            newTeachers.add(teacher);
+        }
+        return Result.ok(newTeachers);
+    }
+
+    @Override
+    public Result getAllCV(Integer page) {
+        IPage<CV> recordPage = new Page<>(page, 10);
+        QueryWrapper<CV> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<CV> records = cvMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        for(CV cv : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", cv.getId());
+            item.put("subjects", cv.getSubjects());
+            item.put("description", cv.getDescription());
+            item.put("areas", cv.getAreas());
+            item.put("certificate", cv.getCertificate());
+            item.put("studentEvaluate", cv.getStudentEvaluate());
+            item.put("mode", cv.getMode());
+            item.put("salary", cv.getSalary());
+            item.put("teacherId", cv.getTeacherId());
+            item.put("status", cv.getStatus());
+            item.put("isExamine", cv.getIsExamine());
+            items.add(item);
+        }
+        resp.put("records", items);
+        resp.put("total_records", cvMapper.selectCount(null));
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result examineYesById(Integer id) {
+        CV cv = cvMapper.selectById(id);
+        if (cv != null) {
+            cv.setIsExamine(1);
+            cv.setStatus(1);
+            cvMapper.updateById(cv);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result examineNotById(Integer id) {
+        CV cv = cvMapper.selectById(id);
+        if (cv != null) {
+            cv.setIsExamine(1);
+            cv.setStatus(0);
+            cvMapper.updateById(cv);
+        }
+        return Result.ok();
     }
 }

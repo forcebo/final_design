@@ -2,7 +2,10 @@ package com.finaldesign.backend.service.impl.user.account;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.StudentMapper;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.pojo.Student;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -244,5 +248,29 @@ public class StudentServiceImpl implements UserService {
         student.setPhoto(photo);
         studentMapper.updateById(student);
         return Result.ok(photo);
+    }
+
+    @Override
+    public Result getAll(Integer page) {
+        IPage<Student> recordPage = new Page<>(page, 10);
+        QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<Student> records = studentMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        for(Student student : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", student.getId());
+            item.put("username", student.getUsername());
+            item.put("photo", student.getPhoto());
+            item.put("realname", student.getRealname());
+            item.put("sex", student.getSex());
+            item.put("phone", student.getPhone());
+            item.put("address", student.getAddress());
+            items.add(item);
+        }
+        resp.put("students", items);
+        resp.put("total_students", studentMapper.selectCount(null));
+        return Result.ok(resp);
     }
 }

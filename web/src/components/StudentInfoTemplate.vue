@@ -113,7 +113,7 @@
             <div class="col-md-9">
               <div
                 class="card"
-                style="height: 200px; width: 700px; border-radius: 0%"
+                style="width: 700px; border-radius: 0%"
               >
                 <slot></slot>
               </div>

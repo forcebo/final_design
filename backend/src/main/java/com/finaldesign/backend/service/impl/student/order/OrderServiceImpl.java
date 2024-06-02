@@ -1,10 +1,11 @@
 package com.finaldesign.backend.service.impl.student.order;
 
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.OrderMapper;
-import com.finaldesign.backend.pojo.Order;
-import com.finaldesign.backend.pojo.Result;
-import com.finaldesign.backend.pojo.Student;
+import com.finaldesign.backend.pojo.*;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.student.order.OrderService;
 import com.finaldesign.backend.utils.OrderIdCreateUtil;
@@ -13,7 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -99,5 +102,54 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orders = orderMapper.selectList(queryWrapper);
         return Result.ok(orders);
+    }
+
+    @Override
+    public Result getAllOrders(Integer page) {
+        IPage<Order> recordPage = new Page<>(page, 10);
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<Order> records = orderMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for(Order order : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", order.getId());
+            item.put("no", order.getNo());
+            item.put("studentId",order.getStudentId());
+            item.put("teacherId",order.getTeacherId());
+            item.put("courseId",order.getCourseId());
+            item.put("price",order.getPrice());
+            item.put("time",sdf.format(order.getTime()));
+            item.put("status", order.getStatus());
+            item.put("isExamine", order.getIsExamine());
+            items.add(item);
+        }
+        resp.put("records", items);
+        resp.put("total_records", orderMapper.selectCount(null));
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result examineYesById(Integer id) {
+        Order order = orderMapper.selectById(id);
+        if (order != null) {
+            order.setIsExamine(1);
+            order.setStatus(1);
+            orderMapper.updateById(order);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result examineNotById(Integer id) {
+        Order order = orderMapper.selectById(id);
+        if (order != null) {
+            order.setIsExamine(1);
+            order.setStatus(0);
+            orderMapper.updateById(order);
+        }
+        return Result.ok();
     }
 }

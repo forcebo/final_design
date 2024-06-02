@@ -81,6 +81,18 @@
               </div>
               <div class="list-group" style="width: 200px; border-radius: 0%">
                 <router-link
+                    to="/teacher/info/reserves/"
+                    style="height: 35px"
+                    class="list-group-item list-group-item-action"
+                    >我的预约</router-link
+                  >
+                  <router-link
+                    to="/teacher/info/comments/"
+                    style="height: 35px"
+                    class="list-group-item list-group-item-action"
+                    >我的评论</router-link
+                  >
+                <router-link
                   to="/teacher/info/update/"
                   style="height: 35px"
                   class="list-group-item list-group-item-action"
@@ -99,7 +111,7 @@
           <div class="col-md-9">
             <div
               class="card"
-              style="height: 200px; width: 700px; border-radius: 0%"
+              style="width: 700px; border-radius: 0%"
             >
             <slot></slot>
             </div>

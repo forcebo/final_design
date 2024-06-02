@@ -94,4 +94,9 @@ public class AdminServiceImpl implements UserService {
     public Result updatePhoto(String photo) {
         return null;
     }
+
+    @Override
+    public Result getAll(Integer page) {
+        return null;
+    }
 }

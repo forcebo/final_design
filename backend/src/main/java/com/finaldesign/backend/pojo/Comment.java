@@ -24,4 +24,5 @@ public class Comment {
     private Date time;
     private Integer isGood;
     private Integer status;
+    private Integer isExamine;
 }

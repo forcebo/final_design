@@ -1,7 +1,7 @@
 <template>
   <NavBar />
   <ContentField>
-    <div class="modal" id="successModal" tabindex="-1" style="align-items: center; justify-content: center;">
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="align-items: center; justify-content: center;">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -20,14 +20,13 @@
     <div class="row justify-content-center">
       <div
         class="card"
-        style="height: 1100px; width: 1000px; border-radius: 0%"
+        style="border-radius: 0%"
       >
         <div class="row" style="margin-top: 10px">
-          <!-- 左侧导航栏 -->
-          <div class="col-md-8">
+          <div class="col-md-12">
             <div
               class="card"
-              style="height: 1050px; width: 650px; border-radius: 0%"
+              style="border-radius: 0%"
             >
               <div style="background-color: rgb(247, 251, 254)">
                 <img
@@ -76,7 +75,7 @@
                       type="button"
                       class="btn btn-primary"
                       data-bs-toggle="modal" data-bs-target="#myModal"
-
+                      id="subjects"
                     >
                       选择科目
                     </button>
@@ -139,7 +138,7 @@
                           </div>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" @click="getSubjects">确定</button>
+                          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="getSubjects">确定</button>
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                         </div>
                       </div>
@@ -194,7 +193,6 @@
                   style="margin-top: 10px"
                 >
                   <label
-                    for="areas"
                     class="col-sm-4 col-form-label text-end"
                     style="font-size: x-small"
                   >
@@ -214,7 +212,6 @@
                           />
                           <label
                             class="form-check-label"
-                            for="mode"
                             style="font-size: x-small"
                           >{{ area }}</label>
                         </div>
@@ -227,7 +224,6 @@
                   style="margin-top: 10px"
                 >
                   <label
-                    for="studentSex"
                     class="col-sm-4 col-form-label text-end"
                     style="font-size: x-small"
                   >
@@ -248,7 +244,6 @@
                   style="margin-top: 10px"
                 >
                   <label
-                    for="mode"
                     class="col-sm-4 col-form-label text-end"
                     style="font-size: x-small"
                   >
@@ -266,7 +261,6 @@
                       />
                       <label
                         class="form-check-label"
-                        for="mode"
                         style="font-size: x-small"
                         >上门辅导</label
                       >
@@ -283,7 +277,6 @@
                       />
                       <label
                         class="form-check-label"
-                        for="mode"
                         style="font-size: x-small"
                         >网络辅导</label
                       >
@@ -300,7 +293,6 @@
                       />
                       <label
                         class="form-check-label"
-                        for="mode"
                         style="font-size: x-small"
                         >均可</label
                       >
@@ -355,24 +347,6 @@
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-          <!-- 右侧内容 -->
-          <div class="col-md-4">
-            <div
-              class="card"
-              style="height: 200px; width: 300px; border-radius: 0%"
-            >
-              <div style="background-color: rgb(249, 232, 185)">
-                <img
-                  src="https://xa.eduease.com/beijingjiajiao/i/d10.gif"
-                  alt="图像"
-                  style="margin-left: 10px"
-                />
-                <span style="font-weight: bold; margin-left: 10px"
-                  >最新学员!</span
-                >
-              </div>
             </div>
           </div>
         </div>
@@ -450,7 +424,7 @@ export default {
         }),
         success(resp) {
           if (resp.success == true) {
-            modal_error_message.value = "发布求职信息成功，您可以在个人中心页面查看";
+            modal_error_message.value = "发布求职信息成功!";
             var myModal = new bootstrap.Modal(document.getElementById('successModal'));
             myModal.show();
           } else if(resp.success == false){

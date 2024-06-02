@@ -1,13 +1,18 @@
 package com.finaldesign.backend.service.impl.teacher.course;
 
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.CourseMapper;
+import com.finaldesign.backend.pojo.CV;
 import com.finaldesign.backend.pojo.Course;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.service.teacher.course.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -33,5 +38,54 @@ public class CourseServiceImpl implements CourseService {
         }
         Course course = courseMapper.selectById(id);
         return Result.ok(course);
+    }
+
+    @Override
+    public Result getAllCourses(Integer page) {
+        IPage<Course> recordPage = new Page<>(page, 10);
+        QueryWrapper<Course> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<Course> records = courseMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        for(Course course : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", course.getId());
+            item.put("name", course.getName());
+            item.put("description", course.getDescription());
+            item.put("teacherId", course.getTeacherId());
+            item.put("thumbnail", course.getThumbnail());
+            item.put("videoUrl", course.getVideoUrl());
+            item.put("area", course.getArea());
+            item.put("price", course.getPrice());
+            item.put("status", course.getStatus());
+            item.put("isExamine", course.getIsExamine());
+            items.add(item);
+        }
+        resp.put("records", items);
+        resp.put("total_records", courseMapper.selectCount(null));
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result examineYesById(Integer id) {
+        Course course = courseMapper.selectById(id);
+        if (course != null) {
+            course.setIsExamine(1);
+            course.setStatus(1);
+            courseMapper.updateById(course);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result examineNotById(Integer id) {
+        Course course = courseMapper.selectById(id);
+        if (course != null) {
+            course.setIsExamine(1);
+            course.setStatus(0);
+            courseMapper.updateById(course);
+        }
+        return Result.ok();
     }
 }

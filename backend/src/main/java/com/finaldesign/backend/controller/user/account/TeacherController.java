@@ -84,4 +84,13 @@ public class TeacherController {
     public Result updateInfo(@RequestParam Map<String, String> map) {
         return UserServiceFactory.getUserService("TEACHER").updateInfo(map);
     }
+
+    @GetMapping("/admin/get/all/teacher/")
+    public Result getAllTeacher(@RequestParam Map<String, String> data) {
+        Integer page = Integer.parseInt(data.get("page"));
+        if (page == null || page < 1) {
+            return Result.fail("获取老师信息失败");
+        }
+        return UserServiceFactory.getUserService("TEACHER").getAll(page);
+    }
 }

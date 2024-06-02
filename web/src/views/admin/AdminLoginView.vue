@@ -73,7 +73,7 @@ export default {
           } else if (resp.success == true) {
             store.dispatch("getAdminInfo", {
               success() {
-                router.push({ name: "admin_index" });
+                router.push({ name: "首页" });
                 console.log(store.state.admin);
               },
             });

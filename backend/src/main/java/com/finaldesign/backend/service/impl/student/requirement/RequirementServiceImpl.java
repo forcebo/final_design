@@ -2,6 +2,10 @@ package com.finaldesign.backend.service.impl.student.requirement;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.RequirementMapper;
 import com.finaldesign.backend.pojo.Requirement;
 import com.finaldesign.backend.pojo.Result;
@@ -12,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class RequirementServiceImpl implements RequirementService {
@@ -81,6 +88,61 @@ public class RequirementServiceImpl implements RequirementService {
         requirement.setStudentId(student.getId());
 
         requirementMapper.insert(requirement);
+        return Result.ok();
+    }
+
+    @Override
+    public Result getAllRequirements(Integer page) {
+        IPage<Requirement> recordPage = new Page<>(page, 10);
+        QueryWrapper<Requirement> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<Requirement> records = requirementMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        for(Requirement requirement : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", requirement.getId());
+            item.put("studentName", requirement.getStudentName());
+            item.put("phone", requirement.getPhone());
+            item.put("area", requirement.getArea());
+            item.put("areaDetailDescription", requirement.getAreaDetailDescription());
+            item.put("sex", requirement.getSex());
+            item.put("grade", requirement.getGrade());
+            item.put("subject", requirement.getSubject());
+            item.put("classtime", requirement.getClasstime());
+            item.put("condition", requirement.getStudentCondition());
+            item.put("teacherSex", requirement.getTeacherSex());
+            item.put("mode", requirement.getMode());
+            item.put("requriment", requirement.getRequirement());
+            item.put("charge", requirement.getCharge());
+            item.put("status", requirement.getStatus());
+            item.put("isExamine", requirement.getIsExamine());
+            items.add(item);
+        }
+        resp.put("records", items);
+        resp.put("total_records", requirementMapper.selectCount(null));
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result examineYesById(Integer id) {
+        Requirement requirement = requirementMapper.selectById(id);
+        if (requirement != null) {
+            requirement.setIsExamine(1);
+            requirement.setStatus(1);
+            requirementMapper.updateById(requirement);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result examineNotById(Integer id) {
+        Requirement requirement = requirementMapper.selectById(id);
+        if (requirement != null) {
+            requirement.setIsExamine(1);
+            requirement.setStatus(0);
+            requirementMapper.updateById(requirement);
+        }
         return Result.ok();
     }
 

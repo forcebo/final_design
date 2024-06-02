@@ -21,8 +21,17 @@ import TutorReserveView from '@/views/TutorReserveView'
 import TutorCourseView from '@/views/TutorCourseView'
 import StudentReservesView from '@/views/student/StudentReservesView'
 import StudentCourseOrdersView from '@/views/student/StudentCourseOrdersView'
-import AdminInfoTemplate from '@/views/admin/AdminInfoTemplate'
+import AdminHomeVuew from '@/views/admin/AdminHomeView.vue'
 import AdminLoginView from '@/views/admin/AdminLoginView'
+import CommentAuditView from '@/views/admin/CommentAuditView'
+import CourseManagementView from '@/views/admin/CourseManagementView'
+import JobInfomationAuditView from '@/views/admin/JobInfomationAuditView'
+import OrderManagementView from '@/views/admin/OrderManagementView'
+import TutorRequirementAuditView from '@/views/admin/TutorRequirementAuditView'
+import UserInfoStatisticsAuditView from '@/views/admin/UserInfoStatisticsAuditView'
+import UserManagementView from '@/views/admin/UserManagementView'
+import TeacherCommentsView from '@/views/teacher/TeacherCommentsView'
+import TeacherReservesView from '@/views/teacher/TeacherReservesView'
 
 const routes = [
   {
@@ -196,6 +205,22 @@ const routes = [
     }
   },
   {
+    path: "/teacher/info/comments/",
+    name: "teacher_info_comments_index",
+    component: TeacherCommentsView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/teacher/info/reserves/",
+    name: "teacher_info_reserves_index",
+    component: TeacherReservesView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
     path: "/admin/login/",
     name: "admin_login_index",
     component: AdminLoginView,
@@ -205,8 +230,64 @@ const routes = [
   },
   {
     path: "/admin/",
-    name: "admin_index",
-    component: AdminInfoTemplate,
+    name: "首页",
+    component: AdminHomeVuew,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/user/management/",
+    name: "用户管理",
+    component: UserManagementView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/tutor/requirement/audit/",
+    name: "家教需求信息审核",
+    component: TutorRequirementAuditView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/job.infomation/audit/",
+    name: "求职信息审核",
+    component: JobInfomationAuditView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/course/management/",
+    name: "课程管理",
+    component: CourseManagementView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/order/mangement/",
+    name: "订单管理",
+    component: OrderManagementView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/comment/audit/",
+    name: "评价审核",
+    component: CommentAuditView,
+    meta: {
+      requestAuth: false,
+    }
+  },
+  {
+    path: "/admin/user/info/statistics/audit/",
+    name: "用户信息统计分析",
+    component: UserInfoStatisticsAuditView,
     meta: {
       requestAuth: false,
     }

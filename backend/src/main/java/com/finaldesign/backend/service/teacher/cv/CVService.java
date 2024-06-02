@@ -9,4 +9,8 @@ public interface CVService {
     Result getJobInformation();
     Result multipleTablesAndCondition(Integer currentPage, ConditionQueryTeacher condition);
     Result getTeacherInfoById(Integer id);
+    Result getTeacherNew();
+    Result getAllCV(Integer page);
+    Result examineYesById(Integer id);
+    Result examineNotById(Integer id);
 }

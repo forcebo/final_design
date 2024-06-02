@@ -2,9 +2,14 @@ package com.finaldesign.backend.service.impl.user.account;
 
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.finaldesign.backend.mapper.StudentMapper;
 import com.finaldesign.backend.mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.Result;
+import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.pojo.Teacher;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.user.account.UserService;
@@ -18,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -286,6 +293,35 @@ public class TeacherServiceImpl implements UserService {
         teacher.setPhoto(photo);
         teacherMapper.updateById(teacher);
         return Result.ok(photo);
+    }
+
+    @Override
+    public Result getAll(Integer page) {
+        IPage<Teacher> recordPage = new Page<>(page, 10);
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<Teacher> records = teacherMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        for(Teacher teacher : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", teacher.getId());
+            item.put("username", teacher.getUsername());
+            item.put("photo", teacher.getPhoto());
+            item.put("identity", teacher.getIdentity());
+            item.put("realname", teacher.getRealname());
+            item.put("school", teacher.getSchool());
+            item.put("sex", teacher.getSex());
+            item.put("age", teacher.getAge());
+            item.put("education", teacher.getEducation());
+            item.put("major", teacher.getMajor());
+            item.put("phone", teacher.getPhone());
+            item.put("address", teacher.getAddress());
+            items.add(item);
+        }
+        resp.put("teachers", items);
+        resp.put("total_teachers", teacherMapper.selectCount(null));
+        return Result.ok(resp);
     }
 
     public boolean isValidOptions(String option, String[] validOptions) {

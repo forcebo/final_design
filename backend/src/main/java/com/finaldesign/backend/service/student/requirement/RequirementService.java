@@ -6,4 +6,7 @@ import org.springframework.stereotype.Service;
 
 public interface RequirementService {
     Result insertRequirement(Requirement requirement);
+    Result getAllRequirements(Integer page);
+    Result examineYesById(Integer id);
+    Result examineNotById(Integer id);
 }

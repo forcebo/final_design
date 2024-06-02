@@ -87,4 +87,12 @@ public class StudentController {
 
         return UserServiceFactory.getUserService("STUDENT").updatePhoto(urlImg);
     }
+    @GetMapping("/admin/get/all/student/")
+    public Result getAllStudent(@RequestParam Map<String, String> data) {
+        Integer page = Integer.parseInt(data.get("page"));
+        if (page == null || page < 1) {
+            return Result.fail("获取学生信息失败");
+        }
+        return UserServiceFactory.getUserService("STUDENT").getAll(page);
+    }
 }

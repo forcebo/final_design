@@ -25,4 +25,6 @@ public class CV {
     private String mode;
     private String salary;
     private Integer teacherId;
+    private Integer status;
+    private Integer isExamine;
 }

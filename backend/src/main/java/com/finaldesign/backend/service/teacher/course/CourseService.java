@@ -6,4 +6,9 @@ public interface CourseService {
     Result getCoursesByTeacherId(Integer teacherId);
 
     Result getCoursesById(Integer id);
+
+    Result getAllCourses(Integer page);
+
+    Result examineYesById(Integer id);
+    Result examineNotById(Integer id);
 }

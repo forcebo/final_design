@@ -7,9 +7,9 @@
       <table class="table table-striped table-hover" style="font-size: x-small;">
                             <thead>
                                 <tr>
-                                    <th>编号</th>
+                                    <th>订单编号</th>
                                     <th>价格</th>
-                                    <th>时间</th>
+                                    <th>下单时间</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>

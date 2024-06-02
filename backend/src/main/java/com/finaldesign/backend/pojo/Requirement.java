@@ -25,11 +25,12 @@ public class Requirement {
     private String grade;
     private String subject;
     private String classtime;
-    @TableField("teacher_condition")
-    private String condition;
+    private String studentCondition;
     private String teacherSex;
     private String mode;
     private String requirement;
     private String charge;
     private Integer studentId;
+    private Integer status;
+    private Integer isExamine;
 }

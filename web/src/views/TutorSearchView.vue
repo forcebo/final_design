@@ -4,13 +4,13 @@
     <div class="row justify-content-center">
       <div
         class="card"
-        style="height: 1100px; width: 1000px; border-radius: 0%"
+        style="width: 1000px; border-radius: 0%"
       >
         <div class="row" style="margin-top: 10px">
           <!-- 左侧导航栏 -->
-          <div class="col-md-9">
+          <div class="col-md-12">
             <div class="card"
-              style="height: 50px; width: 735px; border-radius: 0%">
+              style="border-radius: 0%">
             <div style="margin-top: 10px">
                 <form @submit.prevent="pull_page(id, subject, area, school, education, sex, mode, current_page)">
                 <div class="input-group mb-3">
@@ -71,7 +71,7 @@
                       v-model="sex"
                       class="form-select"
                       id="sex"
-                      style="height: 30px; font-size: x-small; width: 80px;"
+                      style="height: 30px; font-size: x-small; width: 100px;"
                     >
                       <option value="">性别</option>
                       <option value="男">男</option>
@@ -118,16 +118,15 @@
                       <option value="博士毕业">博士毕业</option>
                     </select>
                   </div>
-                  <button class="btn btn-outline-secondary" type="submit" id="button-addon2" style="height: 30px; font-size: x-small; margin-left: 40px;">检索</button>
+                  <button class="btn btn-outline-secondary" type="submit" id="button-addon2" style="height: 30px; font-size: x-small; margin-left: 20px;">检索</button>
                 </div>
               </form>
               </div>
           </div>
-          <div class="card" style="margin-top: 5px; width: 735px; border-radius: 0%; ">
+          <div class="card" style="margin-top: 5px; border-radius: 0%; ">
             <div class="row" style="font-size: x-small; margin-top: 5px; margin-left: 1px;">
               <span class="category">科目分类:</span>
               <span class="options" @click="setSubjectAndPull('语文')">语文</span>
-              <span class="options" @click="setSubjectAndPull('数学')">数学</span>
               <span class="options" @click="setSubjectAndPull('数学')">数学</span>
               <span class="options" @click="setSubjectAndPull('物理')">物理</span>
               <span class="options" @click="setSubjectAndPull('化学')">化学</span>
@@ -208,10 +207,10 @@
             </div>
           </div>
           
-          <div class="card" style="width: 735px; background-color: rgb(255,215,117); border-radius: 0%">
+          <div class="card" style="background-color: rgb(255,215,117); border-radius: 0%">
             <span style="font-size:smaller; margin-left: 10px; font-weight: bold;">西安教员列表</span>
           </div>
-          <div class="card" style="width: 735px; border-radius: 0%">
+          <div class="card" style="border-radius: 0%">
             <nav aria-label="Page navigation example" style="margin-top: 10px;">
             <ul class="pagination justify-content-center">
               <li class="page-item">
@@ -227,7 +226,7 @@
           </nav>
           </div>
           
-          <div class="card" style="border-radius: 0%; width: 735px">
+          <div class="card" style="border-radius: 0%;">
             <table class="table table-striped table-hover" style="font-size: x-small;">
                             <thead>
                                 <tr>
@@ -244,7 +243,7 @@
                                         <span class="record-teacher-tno" style="color: red; font-weight: bold;">{{ teacher.teacher.id}}</span>
                                         <span>{{ teacher.teacher.realname.charAt(0) + "教员(" + teacher.teacher.sex + ")"}}</span>
                                       </div>
-                                        <img :src="teacher.teacher.photo" alt="" class="record-teacher-photo" style="width: 100%;"/>
+                                        <img :src="teacher.teacher.photo" alt="" class="record-teacher-photo" style="width: 80%;"/>
                                         &nbsp;
                                     </td>
                                     <td style="width: 25%;">
@@ -286,23 +285,6 @@
           
           </div>
           <!-- 右侧内容 -->
-          <div class="col-md-3">
-            <div
-              class="card"
-              style="height: 200px; width: 230px; border-radius: 0%"
-            >
-              <div style="background-color: rgb(249, 232, 185)">
-                <img
-                  src="https://xa.eduease.com/beijingjiajiao/i/d10.gif"
-                  alt="图像"
-                  style="margin-left: 10px"
-                />
-                <span style="font-weight: bold; margin-left: 10px"
-                  >最新教员!</span
-                >
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -403,7 +385,6 @@ export default {
         }
 
     const pull_page = (id_x, subject_x, area_x, school_x, education_x, sex_x, mode_x, page) => {
-      console.log(id_x);
       current_page = page;
       $.ajax({
         url: "http://127.0.0.1:3000/teacher/getTeacherList/" + current_page + "/",

@@ -26,4 +26,5 @@ public class Order {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date time;
     private Integer status;
+    private Integer isExamine;
 }

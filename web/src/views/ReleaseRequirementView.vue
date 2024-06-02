@@ -28,16 +28,13 @@
       </div>
     </div>
     <div class="row justify-content-center">
-      <div
-        class="card"
-        style=" width: 1000px; border-radius: 0%"
-      >
+      <div class="card" style="width: 1000px; border-radius: 0%">
         <div class="row" style="margin-top: 10px">
           <!-- 左侧导航栏 -->
-          <div class="col-md-9">
+          <div class="col-md-8">
             <div
               class="card"
-              style="height: 1050px; width: 725px; border-radius: 0%"
+              style=" border-radius: 0%"
             >
               <div style="background-color: rgb(253, 250, 192)">
                 <img
@@ -117,7 +114,7 @@
                       class="form-control"
                       id="studentUsername"
                       placeholder="请输入联系人"
-                      style="height: 30px;font-size: x-small"
+                      style="height: 30px; font-size: x-small"
                     />
                   </div>
                 </div>
@@ -140,7 +137,7 @@
                       class="form-control"
                       id="studentPhoneNumber"
                       placeholder="请输入联系电话"
-                      style="height: 30px;font-size: x-small"
+                      style="height: 30px; font-size: x-small"
                     />
                   </div>
                 </div>
@@ -201,7 +198,7 @@
                       type="text"
                       class="form-control"
                       id="areaDetailDescription"
-                      style="height: 30px;font-size: x-small"
+                      style="height: 30px; font-size: x-small"
                     />
                   </div>
                   <div class="col-sm-4">
@@ -605,7 +602,7 @@
                 </div>
                 <div
                   class="d-flex justify-content-center"
-                  style="margin-left: 100px; font-size: x-small;"
+                  style="margin-left: 100px; font-size: x-small"
                 >
                   <div class="error-message">{{ error_message }}</div>
                 </div>
@@ -632,10 +629,10 @@
             </div>
           </div>
           <!-- 右侧内容 -->
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div
               class="card"
-              style="height: 200px; width: 230px; border-radius: 0%"
+              style="border-radius: 0%"
             >
               <div style="background-color: rgb(249, 232, 185)">
                 <img
@@ -647,6 +644,25 @@
                   >最新教员!</span
                 >
               </div>
+              <table
+                  class="table table-striped table-hover"
+                  style="font-size: x-small"
+                >
+                  <tbody>
+                    <tr v-for="teacher in newTeachers" :key="teacher.id" @click="getToDetail(teacher.id)" style="cursor: pointer">
+                      <td style="width: 20%">
+                          <span
+                            style="color: green; font-weight: bold"
+                            >{{ teacher.realname.charAt(0) + "教员" }}</span
+                          >
+                      </td>
+                      <td style="width: 40%">
+                        <span>{{ teacher.school }}</span>
+                      </td>
+                      <td style="width: 40%; color: darkgray;">{{ teacher.major }}</td>
+                    </tr>
+                  </tbody>
+                </table>
             </div>
           </div>
         </div>
@@ -656,11 +672,11 @@
 </template>
 
 <script>
-import NavBar from "@/components/NavBar.vue"
-import ContentField from "../components/ContentField.vue"
-import { ref } from "vue"
-import $ from "jquery"
-import { useStore } from "vuex"
+import NavBar from "@/components/NavBar.vue";
+import ContentField from "../components/ContentField.vue";
+import { ref } from "vue";
+import $ from "jquery";
+import { useStore } from "vuex";
 export default {
   components: {
     NavBar,
@@ -686,11 +702,12 @@ export default {
     let showSuccess = ref(false);
     let modal_error_message = ref("");
     charge.value = "面议";
+    let newTeachers = ref([]);
 
     const closeModal = () => {
       showSuccess.value = false;
       window.location.reload();
-    }
+    };
 
     const releaseRequirement = () => {
       error_message.value = "";
@@ -719,9 +736,10 @@ export default {
         }),
         success(resp) {
           if (resp.success == true) {
-            modal_error_message.value = "发布需求成功，您可以在个人中心页面查看";
+            modal_error_message.value =
+              "发布需求成功，您可以在个人中心页面查看";
             showSuccess.value = true;
-          } else if(resp.success == false){
+          } else if (resp.success == false) {
             error_message.value = resp.errorMsg;
           }
           console.log(resp);
@@ -730,7 +748,31 @@ export default {
           error_message.value = "未知错误，请重试！";
           console.log(resp);
         },
-      })
+      });
+    };
+
+    const getTeacherNew = () => {
+      $.ajax({
+        url: "http://127.0.0.1:3000/student/get/teacher/new/",
+        type: "get",
+        headers: {
+          Authorization: "Bearer " + store.state.student.token,
+        },
+        success(resp) {
+          if (resp.success == true) {
+            newTeachers.value = resp.data;
+          }
+        },
+        error(resp) {
+          console.error(resp);
+        },
+      });
+    }
+
+    getTeacherNew();
+
+    const getToDetail = (id) => {
+      window.open('/tutor/detail/?id='+ id, '_blank');
     }
 
     return {
@@ -752,6 +794,8 @@ export default {
       showSuccess,
       closeModal,
       modal_error_message,
+      newTeachers,
+      getToDetail,
     };
   },
 };

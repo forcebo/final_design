@@ -1,5 +1,8 @@
 <template>
   <StudentInfoTemplate>
+    <div class="row">
+      <span style="text-align: center;">我的预约</span>
+    </div>
     <div class="d-flex justify-content-center">
       <table class="table table-striped table-hover" style="font-size: x-small;">
                             <thead>

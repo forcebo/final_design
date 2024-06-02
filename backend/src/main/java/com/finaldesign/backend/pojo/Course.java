@@ -24,4 +24,5 @@ public class Course {
     private String area;
     private BigDecimal price;
     private Integer status;
+    private Integer isExamine;
 }

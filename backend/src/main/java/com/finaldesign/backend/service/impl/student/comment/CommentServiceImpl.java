@@ -3,13 +3,13 @@ package com.finaldesign.backend.service.impl.student.comment;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.CommentMapper;
 import com.finaldesign.backend.mapper.StudentMapper;
-import com.finaldesign.backend.pojo.Comment;
-import com.finaldesign.backend.pojo.CommenterInfo;
-import com.finaldesign.backend.pojo.Result;
-import com.finaldesign.backend.pojo.Student;
+import com.finaldesign.backend.pojo.*;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
+import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.student.comment.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -29,20 +30,22 @@ public class CommentServiceImpl implements CommentService {
     private StudentMapper studentMapper;
 
     @Override
-    public Result getCommentByReceiveId(Integer receiveId) {
+    public Result getCommentByReceiveId(Integer receiveId, Integer page) {
         if (receiveId == null || receiveId < 0) {
             return Result.fail("参数错误");
         }
+        IPage<Comment> recordPage = new Page<>(page, 10);
         JSONObject jsonObject = new JSONObject();
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("receive_id", receiveId).eq("status", 1);
-        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        queryWrapper.eq("receive_id", receiveId).eq("status", 1).orderByDesc("id");
+        List<Comment> comments = commentMapper.selectPage(recordPage,queryWrapper).getRecords();
         List<CommenterInfo> commenterInfos = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         int goodNum = 0;
         for (Comment comment : comments) {
             CommenterInfo commenterInfo = new CommenterInfo();
             Student student = studentMapper.selectById(comment.getSendId());
+            commenterInfo.setStudentId(student.getId());
             commenterInfo.setUsername(student.getUsername());
             commenterInfo.setPhoto(student.getPhoto());
             commenterInfo.setContent(comment.getContent());
@@ -57,10 +60,12 @@ public class CommentServiceImpl implements CommentService {
             }
             commenterInfos.add(commenterInfo);
         }
-        jsonObject.put("comments", commenterInfos);
+        jsonObject.put("records", commenterInfos);
         double goodRate = (double) goodNum / (double) comments.size();
         jsonObject.put("goodRate", goodRate);
-        jsonObject.put("total", comments.size());
+        QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
+        commentQueryWrapper.eq("receive_id", receiveId).eq("status",1);
+        jsonObject.put("total_records", commentMapper.selectCount(commentQueryWrapper));
         return Result.ok(jsonObject);
     }
 
@@ -70,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
-            return Result.fail("token不匹配,请注册学生用户再购买课程");
+            return Result.fail("token不匹配,请注册学生用户评论");
         }
 
         StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
@@ -90,5 +95,91 @@ public class CommentServiceImpl implements CommentService {
         comment.setTime(new Date());
         commentMapper.insert(comment);
         return Result.ok();
+    }
+
+    @Override
+    public Result getAllComments(Integer page) {
+        IPage<Comment> recordPage = new Page<>(page, 10);
+        QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("id");
+        List<Comment> records = commentMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        List<JSONObject> items = new LinkedList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for(Comment comment : records) {
+            JSONObject item = new JSONObject();
+            item.put("id", comment.getId());
+            item.put("content", comment.getContent());
+            item.put("time", sdf.format(comment.getTime()));
+            item.put("isGood", comment.getIsGood());
+            item.put("status", comment.getStatus());
+            item.put("isExamine", comment.getIsExamine());
+            items.add(item);
+        }
+        resp.put("records", items);
+        resp.put("total_records", commentMapper.selectCount(null));
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result examineYesById(Integer id) {
+        Comment comment = commentMapper.selectById(id);
+        if (comment != null) {
+            comment.setIsExamine(1);
+            comment.setStatus(1);
+            commentMapper.updateById(comment);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result examineNotById(Integer id) {
+        Comment comment = commentMapper.selectById(id);
+        if (comment != null) {
+            comment.setIsExamine(1);
+            comment.setStatus(0);
+            commentMapper.updateById(comment);
+        }
+        return Result.ok();
+    }
+
+    @Override
+    public Result getCommentsByStudentId(Integer page) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
+            return Result.fail("token不匹配,请登录教师用户");
+        }
+        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+        Student student = loginUser.getStudent();
+        IPage<Comment> recordPage = new Page<>(page, 10);
+        QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("receive_id", student.getId()).orderByDesc("id");
+        List<Comment> records = commentMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        resp.put("records", records);
+        resp.put("total_records", records.size());
+        return Result.ok(resp);
+    }
+
+    @Override
+    public Result getCommentsByTeacherId(Integer page) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配,请登录教师用户");
+        }
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+        IPage<Comment> recordPage = new Page<>(page, 10);
+        QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("receive_id", teacher.getId()).orderByDesc("id");
+        List<Comment> records = commentMapper.selectPage(recordPage, queryWrapper).getRecords();
+        JSONObject resp = new JSONObject();
+        resp.put("records", records);
+        resp.put("total_records", records.size());
+        return Result.ok(resp);
     }
 }
