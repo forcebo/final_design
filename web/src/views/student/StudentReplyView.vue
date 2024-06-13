@@ -1,12 +1,12 @@
 <template>
-  <TeacherInfoTemplate>
+  <StudentInfoTemplate>
     <div class="d-flex justify-content-center">
-      <span style="color: red; font-weight: bold">评论</span>
+      <span style="color: red; font-weight: bold">我的回复</span>
     </div>
     <table class="table table-striped table-hover" style="font-size: x-small">
       <thead>
         <tr>
-          <th>学生</th>
+          <th>老师</th>
           <th>内容</th>
           <th>时间</th>
           <th>操作</th>
@@ -49,7 +49,7 @@
               <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h1 class="modal-title fs-5">回复{{ comment.username }}</h1>
+                    <h1 class="modal-title fs-5">回复{{ comment.username }}老师</h1>
                     <button
                       type="button"
                       class="btn-close"
@@ -70,7 +70,13 @@
                   </div>
                   <div class="modal-footer">
                     <div class="error-message">{{ error_message }}</div>
-                    <button type="button" class="btn btn-primary" @click="replyContentSubmit(comment.studentId)">回复</button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      @click="replyContentSubmit(comment.studentId)"
+                    >
+                      回复
+                    </button>
                     <button
                       type="button"
                       class="btn btn-secondary"
@@ -104,17 +110,17 @@
         </li>
       </ul>
     </nav>
-  </TeacherInfoTemplate>
+  </StudentInfoTemplate>
 </template>
-    
-    <script>
-import TeacherInfoTemplate from "@/components/TeacherInfoTemplate.vue";
+  
+  <script>
+import StudentInfoTemplate from "@/components/StudentInfoTemplate.vue";
 import { ref } from "vue";
 import $ from "jquery";
 import { useStore } from "vuex";
 export default {
   components: {
-    TeacherInfoTemplate,
+    StudentInfoTemplate,
   },
   setup() {
     const store = useStore();
@@ -130,7 +136,7 @@ export default {
       let max_pages = parseInt(Math.ceil(total_records / 10));
 
       if (page >= 1 && page <= max_pages) {
-        getTeacherComments(page);
+        getStudentComments(page);
       }
     };
 
@@ -148,18 +154,18 @@ export default {
       }
     };
 
-    const getTeacherComments = (page) => {
+    const getStudentComments = (page) => {
       current_page = page;
       $.ajax({
         url:
           "http://127.0.0.1:3000/comment/get/identity/" +
-          store.state.teacher.id +
+          store.state.student.id +
           "/" +
           page +
           "/",
         type: "get",
         headers: {
-          Authorization: "Bearer " + store.state.teacher.token,
+          Authorization: "Bearer " + store.state.student.token,
         },
         success(resp) {
           records.value = resp.data.records;
@@ -172,14 +178,14 @@ export default {
         },
       });
     };
-    getTeacherComments(current_page);
+    getStudentComments(current_page);
 
     const replyContentSubmit = (id) => {
       $.ajax({
         url: "http://127.0.0.1:3000/teacher/comment/reply/",
         type: "post",
         headers: {
-          Authorization: "Bearer " + store.state.teacher.token,
+          Authorization: "Bearer " + store.state.student.token,
         },
         contentType: "application/json", // 指定请求的Content-Type为JSON
         dataType: "json", // 指定预期的响应数据类型为JSON
@@ -214,13 +220,8 @@ export default {
   },
 };
 </script>
-    
-    <style scoped>
-div.error-message {
-  font-size: medium;
-  font-weight: 700;
-  color: red;
-}
+  
+  <style scoped>
 </style>
-    
-    
+  
+  

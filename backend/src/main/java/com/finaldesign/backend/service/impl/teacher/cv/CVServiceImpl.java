@@ -16,9 +16,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Collections.list;
 
 @Service
 public class CVServiceImpl implements CVService {
@@ -61,7 +62,17 @@ public class CVServiceImpl implements CVService {
 
     @Override
     public Result getJobInformation() {
-        return null;
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+        QueryWrapper<CV> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("teacher_id", teacher.getId());
+        CV cv = cvMapper.selectOne(queryWrapper);
+        return Result.ok(cv);
     }
 
     @Override
@@ -160,5 +171,108 @@ public class CVServiceImpl implements CVService {
             cvMapper.updateById(cv);
         }
         return Result.ok();
+    }
+
+    @Override
+    public Result hasReleaseJobInformation() {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+        QueryWrapper<CV> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("teacher_id", teacher.getId());
+        CV cv = cvMapper.selectOne(queryWrapper);
+        if (cv != null) {
+            return Result.ok(true);
+        } else {
+            return Result.ok(false);
+        }
+    }
+
+    @Override
+    public Result updateJobInformation(CV newCV) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+        if (StrUtil.isBlank(newCV.getSubjects()) || !ReUtil.isMatch("^([^,]+,)*([^,]+)?$", newCV.getSubjects())) {
+            return Result.fail("可教授科目必须是以,分隔的格式, 且不能为空");
+        }
+        if (StrUtil.isBlank(newCV.getDescription())) {
+            return Result.fail("自我描述不能为空");
+        }
+        if(StrUtil.isBlank(newCV.getAreas()) || !ReUtil.isMatch("^([^,]+,)*([^,]+)?$", newCV.getAreas())) {
+            return Result.fail("可授课区域必须是以,分隔的格式，且不能为空");
+        }
+        if (StrUtil.isBlank(newCV.getMode())) {
+            return Result.fail("辅导方式不能为空");
+        }
+        if (StrUtil.isBlank(newCV.getSalary())) {
+            return Result.fail("薪水要求不能为空");
+        }
+        QueryWrapper<CV> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("teacher_id", teacher.getId());
+        CV oldCV = cvMapper.selectOne(queryWrapper);
+        newCV.setId(oldCV.getId());
+        newCV.setTeacherId(teacher.getId());
+        newCV.setStatus(0);
+        newCV.setIsExamine(0);
+        cvMapper.updateById(newCV);
+        return Result.ok();
+    }
+
+    @Override
+    public Result getRecommendedTeachers(Integer limit) {
+        List<CV> cvs = cvMapper.selectList(null);
+
+        // 计算教师之间的相似度
+        Map<Integer, Map<Integer, Double>> teacherSimilarity = new HashMap<>();
+        for (CV cv1 : cvs) {
+            for (CV cv2 : cvs) {
+                if (!cv1.getId().equals(cv2.getId())) {
+                    double similarity = calculateSimilarity(cv1, cv2);
+                    teacherSimilarity.putIfAbsent(cv1.getTeacherId(), new HashMap<>());
+                    teacherSimilarity.get(cv1.getTeacherId()).put(cv2.getTeacherId(), similarity);
+                }
+            }
+        }
+        // 排序并获取前 limit 个教师
+        List<Integer> recommendedTeacherIds = teacherSimilarity.entrySet().stream()
+                .sorted((e1, e2) -> Double.compare(
+                        e2.getValue().values().stream().mapToDouble(Double::doubleValue).average().orElse(0.0),
+                        e1.getValue().values().stream().mapToDouble(Double::doubleValue).average().orElse(0.0)))
+                .limit(limit)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        List<Teacher> teachers = teacherMapper.selectBatchIds(recommendedTeacherIds);
+        return Result.ok(teachers);
+    }
+    private double calculateSimilarity(CV cv1, CV cv2) {
+        Set<String> subjects1 = new HashSet<>(Arrays.asList(cv1.getSubjects().split(",")));
+        Set<String> subjects2 = new HashSet<>(Arrays.asList(cv2.getSubjects().split(",")));
+        Set<String> areas1 = new HashSet<>(Arrays.asList(cv1.getAreas().split(",")));
+        Set<String> areas2 = new HashSet<>(Arrays.asList(cv2.getAreas().split(",")));
+
+        double subjectSimilarity = calculateJaccardSimilarity(subjects1, subjects2);
+        double areaSimilarity = calculateJaccardSimilarity(areas1, areas2);
+
+        return 0.5 * subjectSimilarity + 0.5 * areaSimilarity; // 可根据需要调整权重
+    }
+
+    private double calculateJaccardSimilarity(Set<String> set1, Set<String> set2) {
+        Set<String> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+
+        Set<String> union = new HashSet<>(set1);
+        union.addAll(set2);
+
+        return (double) intersection.size() / union.size();
     }
 }

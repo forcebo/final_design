@@ -94,6 +94,18 @@
                     class="list-group-item list-group-item-action"
                     >我的预约</router-link
                   >
+                  <!-- <router-link
+                    to="/student/info/requirement/"
+                    style="height: 35px"
+                    class="list-group-item list-group-item-action"
+                    >我的家教需求</router-link
+                  > -->
+                  <router-link
+                    to="/student/info/comments/"
+                    style="height: 35px"
+                    class="list-group-item list-group-item-action"
+                    >我的回复</router-link
+                  >
                   <router-link
                     to="/student/info/update/"
                     style="height: 35px"

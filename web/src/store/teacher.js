@@ -17,6 +17,7 @@ export default ({
     role: "",
     token: "",
     is_agree: "",
+    release_job_information: false, // 是否已经发布求职信息
     is_login: false,
     pulling_info: true, // 是否正在拉取信息
   },
@@ -63,6 +64,9 @@ export default ({
     },
     updateTeacherPullingInfo(state, pulling_info) {
         state.pulling_info = pulling_info;
+    },
+    updateTeacherReleaseJobInformation(state, release_job_information) {
+        state.release_job_information = release_job_information;
     }
   },
   actions: {
@@ -100,6 +104,7 @@ export default ({
                         ...resp.data,
                         is_login: true,
                     });
+                    context.dispatch("getTeacherReleaseJobInformation"),
                     data.success(resp);
                 } else {
                     data.error(resp);
@@ -110,6 +115,24 @@ export default ({
             }
         })
     },
+    getTeacherReleaseJobInformation(context) {
+        $.ajax({
+            url: "http://127.0.0.1:3000/teacher/has/release/job/information/",
+            type: "get",
+            headers: {
+                Authorization: "Bearer " + context.state.token,
+            },
+            success(resp) {
+                if (resp.success == true) {
+                    context.commit("updateTeacherReleaseJobInformation", resp.data);
+                }
+            },
+            error(resp) {
+                console.log(resp);
+            }
+        })
+    },
+    
     teacherLogout(context) {
         context.commit("teacherLogout");
         localStorage.removeItem("jwt_token");

@@ -49,4 +49,9 @@ public class ReserveController {
         }
         return reserveService.getReservesByTeacherId(page);
     }
+
+    @PostMapping("/teacher/comfirm/reserve/{reserveId}/")
+    public Result confirmReserve(@PathVariable Integer reserveId) {
+        return reserveService.confirmReserve(reserveId);
+    }
 }

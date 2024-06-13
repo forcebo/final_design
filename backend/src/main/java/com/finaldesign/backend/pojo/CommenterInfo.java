@@ -10,6 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommenterInfo {
+    private Integer id;
     private Integer studentId;
     private String username;
     private String photo;

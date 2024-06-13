@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.CommentMapper;
 import com.finaldesign.backend.mapper.StudentMapper;
+import com.finaldesign.backend.mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.*;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
@@ -28,6 +29,8 @@ public class CommentServiceImpl implements CommentService {
     private CommentMapper commentMapper;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private TeacherMapper teacherMapper;
 
     @Override
     public Result getCommentByReceiveId(Integer receiveId, Integer page) {
@@ -37,7 +40,8 @@ public class CommentServiceImpl implements CommentService {
         IPage<Comment> recordPage = new Page<>(page, 10);
         JSONObject jsonObject = new JSONObject();
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("receive_id", receiveId).eq("status", 1).orderByDesc("id");
+        queryWrapper.eq("receive_id", receiveId).eq("status", 1)
+                .orderByDesc("id").eq("receive_identity", 1);
         List<Comment> comments = commentMapper.selectPage(recordPage,queryWrapper).getRecords();
         List<CommenterInfo> commenterInfos = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -45,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
         for (Comment comment : comments) {
             CommenterInfo commenterInfo = new CommenterInfo();
             Student student = studentMapper.selectById(comment.getSendId());
+            commenterInfo.setId(comment.getId());
             commenterInfo.setStudentId(student.getId());
             commenterInfo.setUsername(student.getUsername());
             commenterInfo.setPhoto(student.getPhoto());
@@ -61,10 +66,13 @@ public class CommentServiceImpl implements CommentService {
             commenterInfos.add(commenterInfo);
         }
         jsonObject.put("records", commenterInfos);
-        double goodRate = (double) goodNum / (double) comments.size();
-        jsonObject.put("goodRate", goodRate);
+        if (!comments.isEmpty()) {
+            double goodRate = (double) goodNum / (double) comments.size();
+            jsonObject.put("goodRate", goodRate);
+        }
         QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
-        commentQueryWrapper.eq("receive_id", receiveId).eq("status",1);
+        commentQueryWrapper.eq("receive_id", receiveId).eq("status",1)
+                .eq("is_examine", 1).eq("receive_identity", 1);
         jsonObject.put("total_records", commentMapper.selectCount(commentQueryWrapper));
         return Result.ok(jsonObject);
     }
@@ -92,7 +100,9 @@ public class CommentServiceImpl implements CommentService {
         }
         comment.setSendId(student.getId());
         comment.setStatus(0);
+        comment.setIsExamine(0);
         comment.setTime(new Date());
+        comment.setReceiveIdentity(1);
         commentMapper.insert(comment);
         return Result.ok();
     }
@@ -161,6 +171,94 @@ public class CommentServiceImpl implements CommentService {
         resp.put("records", records);
         resp.put("total_records", records.size());
         return Result.ok(resp);
+    }
+
+    @Override
+    public Result replyComment(Comment comment) {
+        Integer sendId = null;
+        Integer receiveIdentity = null;
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken.getPrincipal() instanceof TeacherDetailsImpl) {
+            sendId = ((TeacherDetailsImpl) authenticationToken.getPrincipal()).getTeacher().getId();
+            receiveIdentity = 0;
+        } else if (authenticationToken.getPrincipal() instanceof StudentDetailsImpl) {
+            sendId = ((StudentDetailsImpl) authenticationToken.getPrincipal()).getStudent().getId();
+            receiveIdentity = 1;
+        }
+
+        if (comment == null) {
+            return Result.fail("回复失败");
+        }
+        if (comment.getReceiveId() == null || comment.getReceiveId() < 0) {
+            return Result.fail("回复失败");
+        }
+        if (StrUtil.isBlank(comment.getContent())) {
+            return Result.fail("请输入评论内容");
+        }
+        comment.setSendId(sendId);
+        comment.setStatus(0);
+        comment.setIsExamine(0);
+        comment.setReceiveIdentity(receiveIdentity);
+        comment.setTime(new Date());
+        commentMapper.insert(comment);
+        return Result.ok();
+    }
+
+    @Override
+    public Result getCommentsByIdentity(Integer receiveId, Integer page) {
+        Integer receiveIdentity = 0;
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken.getPrincipal() instanceof TeacherDetailsImpl) {
+            receiveIdentity = 1;
+        }
+        if (receiveId == null || receiveId < 0) {
+            return Result.fail("参数错误");
+        }
+        IPage<Comment> recordPage = new Page<>(page, 10);
+        JSONObject jsonObject = new JSONObject();
+        QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("receive_id", receiveId).eq("status", 1).eq("is_examine", 1)
+                .orderByDesc("id").eq("receive_identity", receiveIdentity);
+        List<Comment> comments = commentMapper.selectPage(recordPage,queryWrapper).getRecords();
+        List<CommenterInfo> commenterInfos = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int goodNum = 0;
+        for (Comment comment : comments) {
+            CommenterInfo commenterInfo = new CommenterInfo();
+            if (receiveIdentity == 1) {
+                Student student = studentMapper.selectById(comment.getSendId());
+                commenterInfo.setId(comment.getId());
+                commenterInfo.setStudentId(student.getId());
+                commenterInfo.setUsername(student.getUsername());
+                commenterInfo.setPhoto(student.getPhoto());
+                commenterInfo.setContent(comment.getContent());
+                Date time = comment.getTime();
+                String formatDate = dateFormat.format(time);
+                commenterInfo.setTime(formatDate);
+            } else {
+                Teacher teacher = teacherMapper.selectById(comment.getSendId());
+                commenterInfo.setId(comment.getId());
+                commenterInfo.setStudentId(teacher.getId());
+                commenterInfo.setUsername(teacher.getUsername());
+                commenterInfo.setPhoto(teacher.getPhoto());
+                commenterInfo.setContent(comment.getContent());
+                Date time = comment.getTime();
+                String formatDate = dateFormat.format(time);
+                commenterInfo.setTime(formatDate);
+            }
+            commenterInfos.add(commenterInfo);
+        }
+        jsonObject.put("records", commenterInfos);
+        QueryWrapper<Comment> commentQueryWrapper = new QueryWrapper<>();
+
+        commentQueryWrapper.eq("receive_id", receiveId).eq("status",1)
+                .eq("is_examine", 1).eq("receive_identity", receiveIdentity);
+        jsonObject.put("total_records", commentMapper.selectCount(commentQueryWrapper));
+        return Result.ok(jsonObject);
     }
 
     @Override

@@ -28,4 +28,5 @@ public class Reserve {
     private String mode;
     private String teacherRequire;
     private String charge;
+    private Integer isConfirm;
 }

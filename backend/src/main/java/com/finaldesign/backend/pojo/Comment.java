@@ -25,4 +25,5 @@ public class Comment {
     private Integer isGood;
     private Integer status;
     private Integer isExamine;
+    private Integer receiveIdentity;
 }

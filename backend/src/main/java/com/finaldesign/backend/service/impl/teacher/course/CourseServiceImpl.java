@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.CourseMapper;
-import com.finaldesign.backend.pojo.CV;
-import com.finaldesign.backend.pojo.Course;
-import com.finaldesign.backend.pojo.Result;
+import com.finaldesign.backend.pojo.*;
+import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
+import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.teacher.course.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,6 +89,21 @@ public class CourseServiceImpl implements CourseService {
             course.setStatus(0);
             courseMapper.updateById(course);
         }
+        return Result.ok();
+    }
+
+    @Override
+    public Result uploadCourse(String courseName, String description, String imageFile, String location, String videoFile, String price) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
+            return Result.fail("token不匹配");
+        }
+        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+        Teacher teacher = loginUser.getTeacher();
+        courseMapper.insert(new Course(null, courseName, description, teacher.getId(), imageFile,
+                videoFile, location, new BigDecimal(price), 0, 0));
         return Result.ok();
     }
 }

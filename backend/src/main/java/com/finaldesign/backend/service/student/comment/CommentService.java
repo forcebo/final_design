@@ -11,4 +11,6 @@ public interface CommentService {
     Result examineNotById(Integer id);
     Result getCommentsByTeacherId(Integer page);
     Result getCommentsByStudentId(Integer page);
+    Result replyComment(Comment comment);
+    Result getCommentsByIdentity(Integer receiveId, Integer page);
 }

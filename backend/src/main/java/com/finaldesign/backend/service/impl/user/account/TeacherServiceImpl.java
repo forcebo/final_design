@@ -11,9 +11,12 @@ import com.finaldesign.backend.mapper.TeacherMapper;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.pojo.Student;
 import com.finaldesign.backend.pojo.Teacher;
+import com.finaldesign.backend.service.impl.utils.AdminDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.TeacherDetailsImpl;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.utils.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,6 +34,7 @@ import java.util.Map;
 @Service
 public class TeacherServiceImpl implements UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(TeacherServiceImpl.class);
     @Autowired
     private TeacherMapper teacherMapper;
 
@@ -154,7 +158,7 @@ public class TeacherServiceImpl implements UserService {
             return Result.fail("手机号不能重复注册");
         }
         String encodedPassword = passwordEncoder.encode(password);
-        String photo = "https://cdn.acwing.com/media/user/profile/photo/160348_lg_916a3c928b.jpg";
+        String photo = "http://localhost:3000/img/2024-05/D17ABC9C088B8AA04DDB603F0CD8110B.jpg";
         Teacher teacher = new Teacher(null, username, encodedPassword, identity, realname, sex, Integer.parseInt(age), education, school, major,
                 phone, address, photo, city);
 
@@ -169,12 +173,18 @@ public class TeacherServiceImpl implements UserService {
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof TeacherDetailsImpl)) {
-            return Result.fail("token不匹配");
+            if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof AdminDetailsImpl))
+                return Result.fail("token不匹配");
+        }
+        TeacherDetailsImpl loginUser;
+        Teacher teacher = null;
+
+        if (authenticationToken.getPrincipal() instanceof TeacherDetailsImpl) {
+            loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
+            teacher = loginUser.getTeacher();
         }
 
-        TeacherDetailsImpl loginUser = (TeacherDetailsImpl) authenticationToken.getPrincipal();
-        Teacher teacher = loginUser.getTeacher();
-
+        String id = map.get("id");
         String username = map.get("username");
         String identity = map.get("identity");
         String realname = map.get("realname");
@@ -189,7 +199,7 @@ public class TeacherServiceImpl implements UserService {
             return Result.fail("用户名不能改为空");
         }
         if (StrUtil.isBlank(identity)) {
-
+            return Result.fail("身份不能为空");
         }
         if (StrUtil.isBlank(realname)) {
             return Result.fail("真实姓名不能改为空");
@@ -208,6 +218,9 @@ public class TeacherServiceImpl implements UserService {
         }
         if (StrUtil.isBlank(address)) {
             return Result.fail("地址不能为空");
+        }
+        if (!StrUtil.isBlank(id)) {
+            teacher = teacherMapper.selectById(id);
         }
         if (!username.equals(teacher.getUsername())) {
             QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();

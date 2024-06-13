@@ -32,6 +32,11 @@ import UserInfoStatisticsAuditView from '@/views/admin/UserInfoStatisticsAuditVi
 import UserManagementView from '@/views/admin/UserManagementView'
 import TeacherCommentsView from '@/views/teacher/TeacherCommentsView'
 import TeacherReservesView from '@/views/teacher/TeacherReservesView'
+import UpdateJobInformationView from '@/views/UpdateJobInformationView'
+import TeacherCoursesView from '@/views/teacher/TeacherCoursesView'
+import TeacherUploadCourseView from '@/views/teacher/TeacherUploadCourseView'
+import StudentRequirementView from '@/views/student/StudentRequirementView'
+import StudentReplyView from '@/views/student/StudentReplyView'
 
 const routes = [
   {
@@ -163,6 +168,22 @@ const routes = [
     }
   },
   {
+    path: "/student/info/requirement/",
+    name: "student_info_requirement_index",
+    component: StudentRequirementView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/student/info/comments/",
+    name: "student_info_comments_index",
+    component: StudentReplyView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
     path: "/teacher/account/register/",
     name: "teacher_account_register",
     component: TeacherAccountRegisterView,
@@ -170,7 +191,14 @@ const routes = [
       requestAuth: false,
     }
   },
-  
+  {
+    path: "/teacher/update/job/information/",
+    name: "teacher_update_job_information_index",
+    component: UpdateJobInformationView,
+    meta: {
+      requestAuth: true,
+    }
+  },
   {
     path: "/teacher/release/job/information/",
     name: "teacher_release_job_information_index",
@@ -204,12 +232,13 @@ const routes = [
       requestAuth: true,
     }
   },
+
   {
     path: "/teacher/info/comments/",
     name: "teacher_info_comments_index",
     component: TeacherCommentsView,
     meta: {
-      requestAuth: false,
+      requestAuth: true,
     }
   },
   {
@@ -217,7 +246,23 @@ const routes = [
     name: "teacher_info_reserves_index",
     component: TeacherReservesView,
     meta: {
-      requestAuth: false,
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/teacher/info/upload/course/",
+    name: "teacher_info_upload_course_index",
+    component: TeacherUploadCourseView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/teacher/info/courses/",
+    name: "teacher_info_courses_index",
+    component: TeacherCoursesView,
+    meta: {
+      requestAuth: true,
     }
   },
   {

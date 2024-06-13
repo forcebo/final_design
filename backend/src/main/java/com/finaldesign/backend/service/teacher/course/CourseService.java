@@ -11,4 +11,6 @@ public interface CourseService {
 
     Result examineYesById(Integer id);
     Result examineNotById(Integer id);
+    Result uploadCourse(String courseName, String description, String imageFile, String location,
+                        String videoFile, String price);
 }

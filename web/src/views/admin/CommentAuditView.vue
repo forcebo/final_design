@@ -9,7 +9,6 @@
           <th>评论id</th>
           <th>评论内容</th>
           <th>评论时间</th>
-          <th>是否好评</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -23,9 +22,6 @@
           </td>
           <td style="width: 20%">
             <span>{{ comment.time }}</span>
-          </td>
-          <td style="width: 10%">
-            <span>{{ comment.isGood == 1 ? "好评" : "坏评" }}</span>
           </td>
           <td>
             <button

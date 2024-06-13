@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.finaldesign.backend.mapper.StudentMapper;
 import com.finaldesign.backend.pojo.Result;
 import com.finaldesign.backend.pojo.Student;
+import com.finaldesign.backend.service.impl.utils.AdminDetailsImpl;
 import com.finaldesign.backend.service.impl.utils.StudentDetailsImpl;
 import com.finaldesign.backend.service.user.account.UserService;
 import com.finaldesign.backend.utils.JwtUtil;
@@ -133,7 +134,7 @@ public class StudentServiceImpl implements UserService {
             return Result.fail("手机号不能重复注册");
         }
         String encodedPassword = passwordEncoder.encode(password);
-        String photo = "https://cdn.acwing.com/media/user/profile/photo/160348_lg_916a3c928b.jpg";
+        String photo = "http://localhost:3000/img/2024-05/Screenshot_20240401_112149.jpg";
         Student user = new Student(null, username, encodedPassword, photo, realname, sex, phone, address);
 
         studentMapper.insert(user);
@@ -147,12 +148,18 @@ public class StudentServiceImpl implements UserService {
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof StudentDetailsImpl)) {
-            return Result.fail("token不匹配");
+            if (authenticationToken == null || !(authenticationToken.getPrincipal() instanceof AdminDetailsImpl)) {
+                return Result.fail("token不匹配");
+            }
         }
+        StudentDetailsImpl loginUser = null;
+        Student student = null;
 
-        StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
-        Student student = loginUser.getStudent();
-
+        if (authenticationToken.getPrincipal() instanceof StudentDetailsImpl) {
+            loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
+            student = loginUser.getStudent();
+        }
+        String id = map.get("id");
         String username = map.get("username");
         String realname = map.get("realname");
         String phone = map.get("phone");
@@ -168,6 +175,10 @@ public class StudentServiceImpl implements UserService {
         }
         if (StrUtil.isBlank(address)) {
             return Result.fail("通讯地址不能为空");
+        }
+
+        if (!StrUtil.isBlank(id)) {
+            student = studentMapper.selectById(id);
         }
 
         if (!username.equals(student.getUsername())) {

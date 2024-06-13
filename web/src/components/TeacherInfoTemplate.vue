@@ -92,6 +92,19 @@
                     class="list-group-item list-group-item-action"
                     >我的评论</router-link
                   >
+                  <router-link
+                    to="/teacher/info/courses/"
+                    style="height: 35px"
+                    class="list-group-item list-group-item-action"
+                    >我的课程</router-link
+                  >
+                  <router-link
+                    to="/teacher/info/upload/course/"
+                    style="height: 35px"
+                    class="list-group-item list-group-item-action"
+                    >上传课程</router-link
+                  >
+
                 <router-link
                   to="/teacher/info/update/"
                   style="height: 35px"

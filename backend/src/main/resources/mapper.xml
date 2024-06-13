@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.finaldesign.backend.mapper.CVMapper">
     <resultMap id="teacherInfo" type="com.finaldesign.backend.pojo.TeacherInfo">
+        <result property="id" column="cv_id"/>
         <result property="teacherId" column="teacher_id"/>
         <result property="subjects" column="subjects"/>
         <result property="description" column="cv_description"/>
@@ -19,9 +20,9 @@
         <result property="teacher.photo" column="photo"/>
     </resultMap>
     <select id="findAndPage" resultMap="teacherInfo">
-        SELECT cv.teacher_id, cv.subjects, cv.description as cv_description, cv.areas, cv.student_evaluate, cv.mode, cv.salary,
+        SELECT cv.id as cv_id, cv.teacher_id, cv.subjects, cv.description as cv_description, cv.areas, cv.student_evaluate, cv.mode, cv.salary,
                teacher.id as tno, teacher.realname, teacher.identity, teacher.school, teacher.sex, teacher.education, teacher.major,
-               teacher.photo FROM t_cv cv, t_teacher teacher WHERE cv.teacher_id = teacher.id
+               teacher.photo FROM t_cv cv, t_teacher teacher WHERE cv.teacher_id = teacher.id and cv.status = 1 and cv.is_examine = 1
         <if test="condition.id !=null and condition.id !=''">
             and teacher.id=#{condition.id}
         </if>
@@ -43,5 +44,6 @@
         <if test="condition.mode !=null and condition.mode !=''">
             and cv.mode=#{condition.mode}
         </if>
+        order by cv.id desc
     </select>
 </mapper>

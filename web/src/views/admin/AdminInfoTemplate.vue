@@ -174,6 +174,7 @@
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 import { useStore } from "vuex";
+import router from "@/router";
 
 export default {
   components: {},
@@ -184,6 +185,7 @@ export default {
 
     const logout = () => {
       store.dispatch("adminLogout");
+      router.push("/admin/login/");
     }
 
     return {

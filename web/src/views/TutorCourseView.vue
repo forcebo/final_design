@@ -93,7 +93,7 @@ export default {
 
     const getCourses = () => {
       $.ajax({
-        url: "http://127.0.0.1:3000/teacher/course/get/" + teacherId.value + "/", // 修改为实际的后端接口地址
+        url: "http://127.0.0.1:3000/teacher/course/get/" + teacherId.value + "/",
         type: "get",
         headers: {
           Authorization: "Bearer " + store.state.student.token,

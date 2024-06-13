@@ -13,4 +13,7 @@ public interface CVService {
     Result getAllCV(Integer page);
     Result examineYesById(Integer id);
     Result examineNotById(Integer id);
+    Result hasReleaseJobInformation();
+    Result updateJobInformation(CV newCV);
+    Result getRecommendedTeachers(Integer limit);
 }

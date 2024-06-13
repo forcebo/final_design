@@ -77,6 +77,7 @@ public class ReserveServiceImpl implements ReserveService {
             return Result.fail("请输入收费要求");
         }
         reserve.setStudentId(student.getId());
+        reserve.setIsConfirm(0);
         reserveMapper.insert(reserve);
         return Result.ok();
     }
@@ -189,6 +190,14 @@ public class ReserveServiceImpl implements ReserveService {
         queryWrapper1.eq("teacher_id", teacher.getId());
         resp.put("total_records", reserveMapper.selectCount(queryWrapper1));
         return Result.ok(resp);
+    }
+
+    @Override
+    public Result confirmReserve(Integer ReserveId) {
+        Reserve reserve = reserveMapper.selectById(ReserveId);
+        reserve.setIsConfirm(1);
+        reserveMapper.updateById(reserve);
+        return Result.ok();
     }
 
 }

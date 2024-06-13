@@ -136,7 +136,7 @@ export default {
     const getJobInfomation = page => {
       current_page = page;
       $.ajax({
-        url: "http://127.0.0.1:3000/admin/get/all/job/infomation/",
+        url: "http://127.0.0.1:3000/admin/get/all/job/information/",
         type: "get",
         data: {
           page,
@@ -160,7 +160,7 @@ export default {
 
     const examineYes = (id) => {
       $.ajax({
-        url: "http://127.0.0.1:3000/admin/examine/job/infomation/yes/" + id + "/",
+        url: "http://127.0.0.1:3000/admin/examine/job/information/yes/" + id + "/",
         type: "post",
         headers: {
           Authorization: "Bearer " + store.state.admin.token,
@@ -177,7 +177,7 @@ export default {
     }
     const examineNot = (id) => {
       $.ajax({
-        url: "http://127.0.0.1:3000/admin/examine/job/infomation/not/" + id + "/",
+        url: "http://127.0.0.1:3000/admin/examine/job/information/not/" + id + "/",
         type: "post",
         headers: {
           Authorization: "Bearer " + store.state.admin.token,

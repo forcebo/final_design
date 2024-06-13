@@ -5,6 +5,7 @@ export default ({
     id: "",
     username: "",
     photo: "",
+    token: "",
     phone: "",
     role: "",
     is_login: false,

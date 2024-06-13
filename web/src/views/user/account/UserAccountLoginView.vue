@@ -272,11 +272,10 @@ export default {
           if (resp.success == false) {
             error_message.value = resp.errorMsg;
           } else if (resp.success == true) {
-            console.log(resp);
             store.dispatch("getTeacherInfo", {
               success() {
                 router.push({ name: "home" });
-                console.log(store.state.Teacher);
+                console.log(store.state.teacher);
               },
             });
           }

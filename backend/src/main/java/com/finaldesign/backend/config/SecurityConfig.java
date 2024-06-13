@@ -50,10 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 学生登录路径
-                .antMatchers("/student/account/token/", "/student/account/register/", "/img/**", "/bo/Videos/**").permitAll()
+                .antMatchers("/student/account/token/", "/student/account/register/", "/img/**", "/bo/Videos/**", "/videos/**").permitAll()
                 // 教师登录路径
                 .antMatchers("/teacher/account/token/", "/teacher/account/register/").permitAll()
-                .antMatchers("/admin/account/token/", "/admin/account/register/").permitAll()
+                .antMatchers("/admin/account/token/", "/admin/account/register/", "/teacher/getTeacherList/**", "/get/recommended/teachers/**", "/student/get/teacher/new/").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated();
 

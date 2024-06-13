@@ -86,7 +86,7 @@
               >课程试听</router-link
             >
           </li> -->
-          <li class="nav-item" v-if="$store.state.teacher.is_login">
+          <li class="nav-item" v-if="$store.state.teacher.is_login & !$store.state.teacher.release_job_information">
             <router-link
               :class="
                 route_name == 'teacher_release_job_information_index'
@@ -95,6 +95,17 @@
               "
               :to="{ name: 'teacher_release_job_information_index' }"
               >发布求职信息</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="$store.state.teacher.is_login & $store.state.teacher.release_job_information">
+            <router-link
+              :class="
+                route_name == 'teacher_update_job_information_index'
+                  ? 'nav-link active'
+                  : 'nav-link'
+              "
+              :to="{ name: 'teacher_update_job_information_index' }"
+              >更新求职信息</router-link
             >
           </li>
           <li class="nav-item" v-if="$store.state.student.is_login">

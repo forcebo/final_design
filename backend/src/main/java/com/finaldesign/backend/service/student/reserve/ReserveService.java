@@ -10,4 +10,5 @@ public interface ReserveService {
     Result cancelReserve(Integer teacherId);
     Result getTop5TeacherForReserveStatistics();
     Result getReservesByTeacherId(Integer page);
+    Result confirmReserve(Integer ReserveId);
 }

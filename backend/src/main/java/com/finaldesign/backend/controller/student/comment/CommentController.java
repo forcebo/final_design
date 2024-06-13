@@ -60,5 +60,15 @@ public class CommentController {
         return commentService.getCommentsByTeacherId(page);
     }
 
+    @PostMapping("/teacher/comment/reply/")
+    public Result replayComment(@RequestBody Comment comment) {
+        return commentService.replyComment(comment);
+    }
+
+    @GetMapping("/comment/get/identity/{receiveId}/{page}/")
+    public Result getCommentsByIdentity(@PathVariable Integer receiveId, @PathVariable Integer page) {
+        return commentService.getCommentsByIdentity(receiveId, page);
+    }
+
 
 }

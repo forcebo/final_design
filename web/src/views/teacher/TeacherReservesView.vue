@@ -47,12 +47,20 @@
           </td>
           <td style="width: 10%">
             <button
+            v-if="reserve.isConfirm == 0"
               type="button"
               class="btn btn-info"
               style="font-size: x-small; height: 30px"
+              @click="confirmReserve(reserve.id)"
             >
               确认
             </button>
+            <span
+            v-else-if="reserve.isConfirm == 1"
+              style="font-size: x-small; height: 30px"
+            >
+              已确认
+            </span>
           </td>
         </tr>
       </tbody>
@@ -142,12 +150,33 @@ export default {
     };
     getTeacherReserves(current_page);
 
+    const confirmReserve = (id) => {
+      $.ajax({
+        url: "http://127.0.0.1:3000/teacher/comfirm/reserve/" + id +"/",
+        type: "post",
+        headers: {
+          Authorization: "Bearer " + store.state.teacher.token,
+        },
+        success(resp) {
+          if (resp.success == true) {
+            getTeacherReserves(current_page);
+          } else {
+            console.log(resp);
+          }
+        },
+        error(resp) {
+          console.log(resp);
+        },
+      });
+    }
+
     return {
       click_page,
       update_pages,
       records,
       total_records,
       pages,
+      confirmReserve,
     };
   },
 };

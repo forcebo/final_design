@@ -298,6 +298,7 @@ import { useStore } from "vuex";
 import { onMounted, ref } from "vue";
 import $ from "jquery"
 import { useRoute } from 'vue-router';
+import router from '@/router';
 
 export default {
   components: {
@@ -400,9 +401,6 @@ export default {
           sex: sex_x,
           mode: mode_x,
         }),
-        headers: {
-          Authorization: "Bearer " + (store.state.student.token == "" ? store.state.teacher.token : store.state.student.token),
-        },
         success(resp) {
           teachers.value = resp.data.teachers;
           total_teachers = resp.data.total_teachers;
@@ -435,7 +433,13 @@ export default {
     }
 
     const lookDetail = (id) => {
-      window.open('/tutor/detail/?id='+ id, '_blank');
+      if (store.state.student.token != "" || store.state.teacher.token != "") {
+        window.open('/tutor/detail/?id='+ id, '_blank');
+      } else {
+        router.push("/user/account/login/");
+        alert("请先登录！");
+      }
+      
     };
 
     return {

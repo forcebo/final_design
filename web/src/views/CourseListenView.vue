@@ -137,7 +137,7 @@ export default {
         url: "http://127.0.0.1:3000/course/get/" + courseId.value + "/",
         type: "get",
         headers: {
-          Authorization: "Bearer " + store.state.student.token,
+          Authorization: "Bearer " + (store.state.student.token == "" ? store.state.teacher.token : store.state.student.token),
         },
         success(resp) {
           if (resp.success == true) {
@@ -180,6 +180,10 @@ export default {
     };
 
     const checkIsPay = () => {
+      if (course.value.teacherId == store.state.teacher.id) {
+        course.value.canWatchFull = true;
+        return;
+      }
       $.ajax({
         url: "http://127.0.0.1:3000/student/course/order/check/" + courseId.value + "/",
         type: "get",
@@ -202,7 +206,6 @@ export default {
     checkIsPay();
 
     const processPayment = () => {
-      console.log("123");
       $.ajax({
         url: "http://127.0.0.1:3000/student/course/order/add/",
         type: "post",
