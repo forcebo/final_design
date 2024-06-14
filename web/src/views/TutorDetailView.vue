@@ -302,7 +302,7 @@ export default {
         url: "http://127.0.0.1:3000/student/get/teacher/info/" + tno.value + "/", // 修改为实际的后端接口地址
         type: "get",
         headers: {
-          Authorization: "Bearer " + store.state.student.token,
+          Authorization: "Bearer " + (store.state.student.token == "" ? store.state.teacher.token : store.state.student.token),
         },
         success(resp) {
           if (resp.success == true) {
@@ -401,7 +401,7 @@ export default {
         url: "http://127.0.0.1:3000/comment/get/" + tno.value + "/"+ page + "/", // 修改为实际的后端接口地址
         type: "get",
         headers: {
-          Authorization: "Bearer " + store.state.student.token,
+          Authorization: "Bearer " + (store.state.student.token == "" ? store.state.teacher.token : store.state.student.token),
         },
         success(resp) {
           if (resp.success == true) {

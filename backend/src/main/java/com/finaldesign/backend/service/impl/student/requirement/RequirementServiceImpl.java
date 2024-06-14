@@ -86,6 +86,8 @@ public class RequirementServiceImpl implements RequirementService {
         StudentDetailsImpl loginUser = (StudentDetailsImpl) authenticationToken.getPrincipal();
         Student student = loginUser.getStudent();
         requirement.setStudentId(student.getId());
+        requirement.setIsExamine(0);
+        requirement.setStatus(0);
 
         requirementMapper.insert(requirement);
         return Result.ok();

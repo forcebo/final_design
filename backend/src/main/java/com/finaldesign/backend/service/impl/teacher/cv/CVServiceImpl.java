@@ -54,6 +54,8 @@ public class CVServiceImpl implements CVService {
         }
 
         cv.setTeacherId(teacher.getId());
+        cv.setIsExamine(0);
+        cv.setStatus(0);
 
         cvMapper.insert(cv);
 
